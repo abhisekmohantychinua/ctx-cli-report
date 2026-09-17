@@ -11,5 +11,6 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
-  "cSpell.words": ["preline"]
+  "cSpell.words": ["preline"],
+  "mermaidChart.showGenerateDiagramCodeLens": false
 }

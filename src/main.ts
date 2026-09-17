@@ -1,4 +1,5 @@
 import "./style.css";
+import "./theme";
 
 import { loadContext } from "./data/loader";
 import { HSStaticMethods } from "preline/non-auto";

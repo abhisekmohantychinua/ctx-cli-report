@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap");
+
 @import "tailwindcss";
 
 @import "../node_modules/preline/variants.css";
@@ -11,3 +13,293 @@
 
 /* Preline Themes */
 /* @import "../node_modules/preline/preline/theme.css"; */
+
+/*
+|--------------------------------------------------------------------------
+| Theme configuration
+|--------------------------------------------------------------------------
+|
+| The custom properties contain the actual light/dark values.
+| Tailwind's @theme section exposes those values as utility tokens.
+|
+*/
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+
+  --ifm-background-color: #ffffff;
+  --ifm-background-surface-color: #f6f3ec;
+
+  --ifm-font-color-base: #0f1115;
+
+  --ifm-color-primary: #824d00;
+  --ifm-color-primary-dark: #7d4900;
+  --ifm-color-primary-darker: #754400;
+  --ifm-color-primary-darkest: #6a3d00;
+  --ifm-color-primary-light: #8b5500;
+  --ifm-color-primary-lighter: #955d00;
+  --ifm-color-primary-lightest: #9c6200;
+
+  --ifm-font-family-base: "Geist", monospace;
+  --ifm-font-family-monospace: "Geist Mono", monospace;
+
+  --ctx-background: var(--ifm-background-color);
+  --ctx-background-surface: var(--ifm-background-surface-color);
+  --ctx-font-color: var(--ifm-font-color-base);
+
+  --ctx-primary: var(--ifm-color-primary);
+  --ctx-primary-dark: var(--ifm-color-primary-dark);
+  --ctx-primary-darker: var(--ifm-color-primary-darker);
+  --ctx-primary-darkest: var(--ifm-color-primary-darkest);
+  --ctx-primary-light: var(--ifm-color-primary-light);
+  --ctx-primary-lighter: var(--ifm-color-primary-lighter);
+  --ctx-primary-lightest: var(--ifm-color-primary-lightest);
+
+  --ctx-border-color: #dedad1;
+  --ctx-border-color-subtle: #ebe7df;
+  --ctx-border-color-strong: #bdb7aa;
+
+  --ctx-muted-color: #6b6a67;
+  --ctx-muted-background: #eeebe4;
+
+  --ctx-success: #287a4b;
+  --ctx-success-background: #e5f3e9;
+
+  --ctx-warning: #996000;
+  --ctx-warning-background: #fff1d6;
+
+  --ctx-danger: #b42318;
+  --ctx-danger-background: #fce8e6;
+
+  --ctx-info: #245f9e;
+  --ctx-info-background: #e6f0fb;
+
+  --ctx-radius-sm: 0.25rem;
+  --ctx-radius-md: 0.5rem;
+  --ctx-radius-lg: 0.75rem;
+  --ctx-radius-xl: 1rem;
+
+  --ctx-shadow-sm: 0 1px 2px rgb(15 17 21 / 0.05);
+  --ctx-shadow-md: 0 4px 12px rgb(15 17 21 / 0.08);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --ifm-background-color: #1a1d22;
+  --ifm-background-surface-color: #0f1115;
+
+  --ifm-font-color-base: #f6f3ec;
+
+  --ifm-color-primary: #f0b35a;
+  --ifm-color-primary-dark: #d99a3d;
+  --ifm-color-primary-darker: #c9872d;
+  --ifm-color-primary-darkest: #b8781f;
+  --ifm-color-primary-light: #f4c06e;
+  --ifm-color-primary-lighter: #f8d18f;
+  --ifm-color-primary-lightest: #fbe1b5;
+
+  --ctx-border-color: #393e47;
+  --ctx-border-color-subtle: #292e36;
+  --ctx-border-color-strong: #565d68;
+
+  --ctx-muted-color: #a5a8ae;
+  --ctx-muted-background: #242830;
+
+  --ctx-success: #7ed6a1;
+  --ctx-success-background: #183a28;
+
+  --ctx-warning: #f0b35a;
+  --ctx-warning-background: #423016;
+
+  --ctx-danger: #ff9b91;
+  --ctx-danger-background: #48201e;
+
+  --ctx-info: #8dbcf0;
+  --ctx-info-background: #1c344d;
+
+  --ctx-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.2);
+  --ctx-shadow-md: 0 4px 16px rgb(0 0 0 / 0.25);
+}
+
+@theme inline {
+  --color-background: var(--ifm-background-color);
+  --color-surface: var(--ifm-background-surface-color);
+
+  --color-foreground: var(--ifm-font-color-base);
+  --color-muted: var(--ctx-muted-color);
+  --color-muted-background: var(--ctx-muted-background);
+
+  --color-primary: var(--ifm-color-primary);
+  --color-primary-dark: var(--ifm-color-primary-dark);
+  --color-primary-darker: var(--ifm-color-primary-darker);
+  --color-primary-darkest: var(--ifm-color-primary-darkest);
+  --color-primary-light: var(--ifm-color-primary-light);
+  --color-primary-lighter: var(--ifm-color-primary-lighter);
+  --color-primary-lightest: var(--ifm-color-primary-lightest);
+
+  --color-border: var(--ctx-border-color);
+  --color-border-subtle: var(--ctx-border-color-subtle);
+  --color-border-strong: var(--ctx-border-color-strong);
+
+  --color-success: var(--ctx-success);
+  --color-success-background: var(--ctx-success-background);
+
+  --color-warning: var(--ctx-warning);
+  --color-warning-background: var(--ctx-warning-background);
+
+  --color-danger: var(--ctx-danger);
+  --color-danger-background: var(--ctx-danger-background);
+
+  --color-info: var(--ctx-info);
+  --color-info-background: var(--ctx-info-background);
+
+  --font-sans: var(--ifm-font-family-base);
+  --font-mono: var(--ifm-font-family-monospace);
+
+  --radius-sm: var(--ctx-radius-sm);
+  --radius-md: var(--ctx-radius-md);
+  --radius-lg: var(--ctx-radius-lg);
+  --radius-xl: var(--ctx-radius-xl);
+
+  --shadow-sm: var(--ctx-shadow-sm);
+  --shadow-md: var(--ctx-shadow-md);
+}
+
+@layer base {
+  html {
+    background-color: var(--ifm-background-color);
+    color: var(--ifm-font-color-base);
+    font-family: var(--ifm-font-family-base);
+  }
+
+  body {
+    min-width: 320px;
+    background-color: var(--ifm-background-color);
+    color: var(--ifm-font-color-base);
+    font-family: var(--ifm-font-family-base);
+    text-rendering: optimizeLegibility;
+  }
+
+  code,
+  pre,
+  kbd,
+  samp {
+    font-family: var(--ifm-font-family-monospace);
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  ::selection {
+    background-color: var(--ifm-color-primary);
+    color: var(--ifm-background-color);
+  }
+}
+
+@layer components {
+  .hs-overlay {
+    --hs-overlay-backdrop-bg: rgb(15 17 21 / 0.55);
+  }
+
+  .hs-dropdown-menu,
+  .hs-tooltip-content,
+  .hs-select-menu,
+  .hs-combo-box-menu,
+  .hs-datepicker {
+    --tw-bg-opacity: 1;
+    background-color: var(--color-surface);
+    color: var(--color-foreground);
+    border-color: var(--color-border);
+  }
+
+  .hs-dropdown-menu,
+  .hs-select-menu,
+  .hs-combo-box-menu,
+  .hs-datepicker {
+    border-width: 1px;
+    border-style: solid;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+  }
+
+  .hs-dropdown-menu [role="menuitem"],
+  .hs-select-menu [role="option"],
+  .hs-combo-box-menu [role="option"] {
+    color: var(--color-foreground);
+  }
+
+  .hs-dropdown-menu [role="menuitem"]:hover,
+  .hs-select-menu [role="option"]:hover,
+  .hs-combo-box-menu [role="option"]:hover,
+  .hs-dropdown-menu [role="menuitem"]:focus,
+  .hs-select-menu [role="option"]:focus,
+  .hs-combo-box-menu [role="option"]:focus {
+    background-color: var(--color-muted-background);
+    color: var(--color-foreground);
+  }
+
+  .hs-overlay-backdrop {
+    background-color: rgb(15 17 21 / 0.55);
+  }
+
+  .hs-overlay-open .hs-overlay-backdrop {
+    opacity: 1;
+  }
+
+  .hs-accordion-toggle {
+    color: var(--color-foreground);
+  }
+
+  .hs-accordion-content {
+    color: var(--color-muted);
+  }
+
+  .hs-tooltip-content {
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+  }
+
+  .hs-tooltip-content::before {
+    border-color: var(--color-foreground);
+  }
+
+  .hs-carousel-pagination button {
+    background-color: var(--color-border-strong);
+  }
+
+  .hs-carousel-pagination button.active,
+  .hs-carousel-pagination button[aria-current="true"] {
+    background-color: var(--color-primary);
+  }
+}
+
+@layer utilities {
+  .ctx-surface {
+    background-color: var(--color-surface);
+  }
+
+  .ctx-page {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  .ctx-muted {
+    color: var(--color-muted);
+  }
+
+  .ctx-border {
+    border-color: var(--color-border);
+  }
+
+  .ctx-focus-ring {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}

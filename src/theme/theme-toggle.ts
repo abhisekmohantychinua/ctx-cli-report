@@ -48,6 +48,11 @@ export interface ThemeSideEffectOptions {
  */
 const DEFAULT_THEME: Theme = "light";
 
+/**
+ * Local storage key used to persist the selected application theme.
+ *
+ * The value is shared across page navigations and browser refreshes.
+ */
 const THEME_STORAGE_KEY = "ctx-cli-theme";
 
 /**
@@ -59,9 +64,15 @@ const THEME_TOGGLE_SELECTOR = "[data-theme-toggle]";
 const THEME_TOGGLE_INDICATOR_SELECTOR = "[data-theme-toggle-indicator]";
 
 /**
- * Returns the currently active theme.
+ * Returns the currently configured application theme.
  *
- * Any state other than the supported `dark` class is treated as light.
+ * The persisted theme is read from local storage. If local storage does not
+ * contain a supported theme, the current document theme is used as a
+ * fallback.
+ *
+ * Any value other than `dark` or `light` is treated as invalid.
+ *
+ * @returns The configured application theme.
  */
 export function getTheme(): Theme {
   const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
@@ -70,16 +81,18 @@ export function getTheme(): Theme {
     return storedTheme;
   }
 
-  return DEFAULT_THEME;
+  return THEME_ROOT.classList.contains("dark") ? "dark" : DEFAULT_THEME;
 }
 
 /**
- * Applies a theme to the document root.
+ * Applies and persists a theme.
  *
  * The root always has exactly one supported theme class:
  * `light` or `dark`.
+ * The selected theme is also saved to local storage so it remains active
+ * across page navigation and browser refreshes.
  *
- * @param theme Theme to apply.
+ * @param theme Theme to apply and persist.
  */
 export function setTheme(theme: Theme): void {
   THEME_ROOT.classList.remove("light", "dark");
@@ -132,6 +145,10 @@ export function applyThemeSideEffects(
 
 /**
  * Initializes the theme system and connects theme toggle controls.
+ *
+ * The initialization process reads the persisted theme, applies it to the
+ * document root, updates theme-dependent DOM elements, and synchronizes
+ * all theme toggle controls.
  *
  * @param options Optional selectors and asset URLs.
  * @returns The active theme after initialization.
@@ -207,11 +224,11 @@ function updateThemeToggleControls(theme: Theme): void {
 /**
  * Toggles between light and dark themes.
  *
- * The new theme is applied to the document root and all configured
- * theme-dependent side effects are updated.
+ * The newly selected theme is applied to the document root, persisted to
+ * local storage, and propagated to all configured theme-dependent elements.
  *
  * @param options Optional selectors and asset URLs.
- * @returns The newly active theme.
+ * @returns The newly active and persisted theme.
  */
 export function toggleTheme(options: ThemeSideEffectOptions = {}): Theme {
   const nextTheme: Theme = getTheme() === "light" ? "dark" : "light";

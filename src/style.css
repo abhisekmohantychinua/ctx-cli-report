@@ -19,33 +19,33 @@
 :root {
   color-scheme: light;
 
-  --ifm-background-color: #ffffff;
-  --ifm-background-surface-color: #f6f3ec;
+  --ctx-background-color: #ffffff;
+  --ctx-background-surface-color: #f6f3ec;
 
-  --ifm-font-color-base: #0f1115;
+  --ctx-font-color-base: #0f1115;
 
-  --ifm-color-primary: #824d00;
-  --ifm-color-primary-dark: #7d4900;
-  --ifm-color-primary-darker: #754400;
-  --ifm-color-primary-darkest: #6a3d00;
-  --ifm-color-primary-light: #8b5500;
-  --ifm-color-primary-lighter: #955d00;
-  --ifm-color-primary-lightest: #9c6200;
+  --ctx-color-primary: #824d00;
+  --ctx-color-primary-dark: #7d4900;
+  --ctx-color-primary-darker: #754400;
+  --ctx-color-primary-darkest: #6a3d00;
+  --ctx-color-primary-light: #8b5500;
+  --ctx-color-primary-lighter: #955d00;
+  --ctx-color-primary-lightest: #9c6200;
 
-  --ifm-font-family-base: "Geist", monospace;
-  --ifm-font-family-monospace: "Geist Mono", monospace;
+  --ctx-font-family-base: "Geist", monospace;
+  --ctx-font-family-monospace: "Geist Mono", monospace;
 
-  --ctx-background: var(--ifm-background-color);
-  --ctx-background-surface: var(--ifm-background-surface-color);
-  --ctx-font-color: var(--ifm-font-color-base);
+  --ctx-background: var(--ctx-background-color);
+  --ctx-background-surface: var(--ctx-background-surface-color);
+  --ctx-font-color: var(--ctx-font-color-base);
 
-  --ctx-primary: var(--ifm-color-primary);
-  --ctx-primary-dark: var(--ifm-color-primary-dark);
-  --ctx-primary-darker: var(--ifm-color-primary-darker);
-  --ctx-primary-darkest: var(--ifm-color-primary-darkest);
-  --ctx-primary-light: var(--ifm-color-primary-light);
-  --ctx-primary-lighter: var(--ifm-color-primary-lighter);
-  --ctx-primary-lightest: var(--ifm-color-primary-lightest);
+  --ctx-primary: var(--ctx-color-primary);
+  --ctx-primary-dark: var(--ctx-color-primary-dark);
+  --ctx-primary-darker: var(--ctx-color-primary-darker);
+  --ctx-primary-darkest: var(--ctx-color-primary-darkest);
+  --ctx-primary-light: var(--ctx-color-primary-light);
+  --ctx-primary-lighter: var(--ctx-color-primary-lighter);
+  --ctx-primary-lightest: var(--ctx-color-primary-lightest);
 
   --ctx-border-color: #dedad1;
   --ctx-border-color-subtle: #ebe7df;
@@ -78,18 +78,18 @@
 .dark {
   color-scheme: dark;
 
-  --ifm-background-color: #1a1d22;
-  --ifm-background-surface-color: #0f1115;
+  --ctx-background-color: #1a1d22;
+  --ctx-background-surface-color: #0f1115;
 
-  --ifm-font-color-base: #f6f3ec;
+  --ctx-font-color-base: #f6f3ec;
 
-  --ifm-color-primary: #f0b35a;
-  --ifm-color-primary-dark: #d99a3d;
-  --ifm-color-primary-darker: #c9872d;
-  --ifm-color-primary-darkest: #b8781f;
-  --ifm-color-primary-light: #f4c06e;
-  --ifm-color-primary-lighter: #f8d18f;
-  --ifm-color-primary-lightest: #fbe1b5;
+  --ctx-color-primary: #f0b35a;
+  --ctx-color-primary-dark: #d99a3d;
+  --ctx-color-primary-darker: #c9872d;
+  --ctx-color-primary-darkest: #b8781f;
+  --ctx-color-primary-light: #f4c06e;
+  --ctx-color-primary-lighter: #f8d18f;
+  --ctx-color-primary-lightest: #fbe1b5;
 
   --ctx-border-color: #393e47;
   --ctx-border-color-subtle: #292e36;
@@ -115,20 +115,20 @@
 }
 
 @theme inline {
-  --color-background: var(--ifm-background-color);
-  --color-surface: var(--ifm-background-surface-color);
+  --color-background: var(--ctx-background-color);
+  --color-surface: var(--ctx-background-surface-color);
 
-  --color-foreground: var(--ifm-font-color-base);
+  --color-foreground: var(--ctx-font-color-base);
   --color-muted: var(--ctx-muted-color);
   --color-muted-background: var(--ctx-muted-background);
 
-  --color-primary: var(--ifm-color-primary);
-  --color-primary-dark: var(--ifm-color-primary-dark);
-  --color-primary-darker: var(--ifm-color-primary-darker);
-  --color-primary-darkest: var(--ifm-color-primary-darkest);
-  --color-primary-light: var(--ifm-color-primary-light);
-  --color-primary-lighter: var(--ifm-color-primary-lighter);
-  --color-primary-lightest: var(--ifm-color-primary-lightest);
+  --color-primary: var(--ctx-color-primary);
+  --color-primary-dark: var(--ctx-color-primary-dark);
+  --color-primary-darker: var(--ctx-color-primary-darker);
+  --color-primary-darkest: var(--ctx-color-primary-darkest);
+  --color-primary-light: var(--ctx-color-primary-light);
+  --color-primary-lighter: var(--ctx-color-primary-lighter);
+  --color-primary-lightest: var(--ctx-color-primary-lightest);
 
   --color-border: var(--ctx-border-color);
   --color-border-subtle: var(--ctx-border-color-subtle);
@@ -146,8 +146,8 @@
   --color-info: var(--ctx-info);
   --color-info-background: var(--ctx-info-background);
 
-  --font-sans: var(--ifm-font-family-base);
-  --font-mono: var(--ifm-font-family-monospace);
+  --font-sans: var(--ctx-font-family-base);
+  --font-mono: var(--ctx-font-family-monospace);
 
   --radius-sm: var(--ctx-radius-sm);
   --radius-md: var(--ctx-radius-md);

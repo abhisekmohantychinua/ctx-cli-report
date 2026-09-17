@@ -5,7 +5,7 @@ import { resolve } from "node:path";
 export default defineConfig({
   plugins: [tailwindcss()],
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       input: {
         index: resolve(import.meta.dirname, "src/pages/index.html"),
         sessions: resolve(import.meta.dirname, "src/pages/sessions.html"),

@@ -160,16 +160,11 @@
 
 @layer base {
   html {
-    background-color: var(--ifm-background-color);
-    color: var(--ifm-font-color-base);
-    font-family: var(--ifm-font-family-base);
+    @apply bg-background text-foreground font-sans;
   }
 
   body {
-    min-width: 320px;
-    background-color: var(--ifm-background-color);
-    color: var(--ifm-font-color-base);
-    font-family: var(--ifm-font-family-base);
+    @apply min-w-[320px] bg-background text-foreground font-sans;
     text-rendering: optimizeLegibility;
   }
 
@@ -177,19 +172,18 @@
   pre,
   kbd,
   samp {
-    font-family: var(--ifm-font-family-monospace);
+    @apply font-mono;
   }
 
   button,
   input,
   select,
   textarea {
-    font: inherit;
+    @apply font-[inherit];
   }
 
   ::selection {
-    background-color: var(--ifm-color-primary);
-    color: var(--ifm-background-color);
+    @apply bg-primary text-background;
   }
 }
 
@@ -203,26 +197,20 @@
   .hs-select-menu,
   .hs-combo-box-menu,
   .hs-datepicker {
-    --tw-bg-opacity: 1;
-    background-color: var(--color-surface);
-    color: var(--color-foreground);
-    border-color: var(--color-border);
+    @apply bg-surface text-foreground border-border;
   }
 
   .hs-dropdown-menu,
   .hs-select-menu,
   .hs-combo-box-menu,
   .hs-datepicker {
-    border-width: 1px;
-    border-style: solid;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
+    @apply border border-solid rounded-lg shadow-md;
   }
 
   .hs-dropdown-menu [role="menuitem"],
   .hs-select-menu [role="option"],
   .hs-combo-box-menu [role="option"] {
-    color: var(--color-foreground);
+    @apply text-foreground;
   }
 
   .hs-dropdown-menu [role="menuitem"]:hover,
@@ -231,65 +219,61 @@
   .hs-dropdown-menu [role="menuitem"]:focus,
   .hs-select-menu [role="option"]:focus,
   .hs-combo-box-menu [role="option"]:focus {
-    background-color: var(--color-muted-background);
-    color: var(--color-foreground);
+    @apply bg-muted-background text-foreground;
   }
 
   .hs-overlay-backdrop {
-    background-color: rgb(15 17 21 / 0.55);
+    @apply bg-[rgb(15_17_21_/_0.55)];
   }
 
   .hs-overlay-open .hs-overlay-backdrop {
-    opacity: 1;
+    @apply opacity-100;
   }
 
   .hs-accordion-toggle {
-    color: var(--color-foreground);
+    @apply text-foreground;
   }
 
   .hs-accordion-content {
-    color: var(--color-muted);
+    @apply text-muted;
   }
 
   .hs-tooltip-content {
-    background-color: var(--color-foreground);
-    color: var(--color-background);
+    @apply bg-foreground text-background;
   }
 
   .hs-tooltip-content::before {
-    border-color: var(--color-foreground);
+    @apply border-foreground;
   }
 
   .hs-carousel-pagination button {
-    background-color: var(--color-border-strong);
+    @apply bg-border-strong;
   }
 
   .hs-carousel-pagination button.active,
   .hs-carousel-pagination button[aria-current="true"] {
-    background-color: var(--color-primary);
+    @apply bg-primary;
   }
 }
 
 @layer utilities {
   .ctx-surface {
-    background-color: var(--color-surface);
+    @apply bg-surface;
   }
 
   .ctx-page {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    @apply bg-background text-foreground;
   }
 
   .ctx-muted {
-    color: var(--color-muted);
+    @apply text-muted;
   }
 
   .ctx-border {
-    border-color: var(--color-border);
+    @apply border-border;
   }
 
   .ctx-focus-ring {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
+    @apply outline-2 outline-primary outline-offset-2;
   }
 }

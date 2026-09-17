@@ -11,17 +11,39 @@ describe("theme-toggle", () => {
   beforeEach(() => {
     document.documentElement.className = "";
     document.body.innerHTML = "";
+    window.localStorage.clear();
   });
 
   describe("getTheme", () => {
-    it("returns light when the root does not have the dark class", () => {
+    it("returns light when no theme has been persisted", () => {
       expect(getTheme()).toBe("light");
     });
 
-    it("returns dark when the root has the dark class", () => {
+    it("returns the persisted light theme", () => {
+      window.localStorage.setItem("ctx-cli-theme", "light");
+
+      document.documentElement.classList.add("dark");
+
+      expect(getTheme()).toBe("light");
+    });
+
+    it("returns the persisted dark theme", () => {
+      window.localStorage.setItem("ctx-cli-theme", "dark");
+
+      expect(getTheme()).toBe("dark");
+    });
+
+    it("falls back to the document theme when the persisted value is invalid", () => {
+      window.localStorage.setItem("ctx-cli-theme", "system");
       document.documentElement.classList.add("dark");
 
       expect(getTheme()).toBe("dark");
+    });
+
+    it("falls back to light when the persisted value is invalid and the root is not dark", () => {
+      window.localStorage.setItem("ctx-cli-theme", "system");
+
+      expect(getTheme()).toBe("light");
     });
   });
 
@@ -46,6 +68,25 @@ describe("theme-toggle", () => {
       expect(document.documentElement.classList.contains("dark")).toBe(false);
       expect(document.documentElement.classList.contains("light")).toBe(true);
     });
+
+    it("persists the selected light theme", () => {
+      setTheme("light");
+
+      expect(window.localStorage.getItem("ctx-cli-theme")).toBe("light");
+    });
+
+    it("persists the selected dark theme", () => {
+      setTheme("dark");
+
+      expect(window.localStorage.getItem("ctx-cli-theme")).toBe("dark");
+    });
+
+    it("updates the persisted theme when changing themes", () => {
+      setTheme("dark");
+      setTheme("light");
+
+      expect(window.localStorage.getItem("ctx-cli-theme")).toBe("light");
+    });
   });
 
   describe("initializeTheme", () => {
@@ -54,23 +95,49 @@ describe("theme-toggle", () => {
 
       expect(theme).toBe("light");
       expect(document.documentElement.classList.contains("light")).toBe(true);
+      expect(window.localStorage.getItem("ctx-cli-theme")).toBe("light");
     });
 
-    it("preserves an existing dark theme", () => {
-      document.documentElement.classList.add("dark");
+    it("initializes the document using the persisted dark theme", () => {
+      window.localStorage.setItem("ctx-cli-theme", "dark");
 
       const theme = initializeTheme();
 
       expect(theme).toBe("dark");
       expect(document.documentElement.classList.contains("dark")).toBe(true);
+      expect(document.documentElement.classList.contains("light")).toBe(false);
+    });
+
+    it("initializes the document using the persisted light theme", () => {
+      window.localStorage.setItem("ctx-cli-theme", "light");
+
+      document.documentElement.classList.add("dark");
+
+      const theme = initializeTheme();
+
+      expect(theme).toBe("light");
+      expect(document.documentElement.classList.contains("light")).toBe(true);
+      expect(document.documentElement.classList.contains("dark")).toBe(false);
     });
 
     it("removes conflicting theme classes", () => {
+      window.localStorage.setItem("ctx-cli-theme", "dark");
       document.documentElement.classList.add("light", "dark");
 
       initializeTheme();
 
       expect(document.documentElement.classList.contains("light")).toBe(false);
+      expect(document.documentElement.classList.contains("dark")).toBe(true);
+    });
+
+    it("restores the persisted theme after the document classes are cleared", () => {
+      setTheme("dark");
+
+      document.documentElement.className = "";
+
+      const theme = initializeTheme();
+
+      expect(theme).toBe("dark");
       expect(document.documentElement.classList.contains("dark")).toBe(true);
     });
   });
@@ -83,6 +150,7 @@ describe("theme-toggle", () => {
 
       expect(theme).toBe("dark");
       expect(getTheme()).toBe("dark");
+      expect(window.localStorage.getItem("ctx-cli-theme")).toBe("dark");
     });
 
     it("changes dark mode to light mode", () => {
@@ -92,6 +160,7 @@ describe("theme-toggle", () => {
 
       expect(theme).toBe("light");
       expect(getTheme()).toBe("light");
+      expect(window.localStorage.getItem("ctx-cli-theme")).toBe("light");
     });
   });
 

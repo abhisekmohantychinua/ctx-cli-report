@@ -14,16 +14,6 @@
 /* Preline Themes */
 /* @import "../node_modules/preline/preline/theme.css"; */
 
-/*
-|--------------------------------------------------------------------------
-| Theme configuration
-|--------------------------------------------------------------------------
-|
-| The custom properties contain the actual light/dark values.
-| Tailwind's @theme section exposes those values as utility tokens.
-|
-*/
-
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {

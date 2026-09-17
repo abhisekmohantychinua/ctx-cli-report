@@ -1,67 +1,11 @@
-/**
- * Supported application themes.
- */
-export type Theme = "light" | "dark";
-
-/**
- * Configuration for theme-related DOM side effects.
- *
- * Selectors are optional so the theming module can be used before the
- * corresponding HTML elements are introduced.
- */
-export interface ThemeSideEffectOptions {
-  /**
-   * Selector for elements whose `src` should point to the light/dark logo.
-   *
-   * The selected element receives the appropriate asset URL.
-   */
-  logoSelector?: string;
-
-  /**
-   * URL of the light-theme logo.
-   */
-  lightLogoUrl?: string;
-
-  /**
-   * URL of the dark-theme logo.
-   */
-  darkLogoUrl?: string;
-
-  /**
-   * Selector for the favicon `<link>` element.
-   */
-  faviconSelector?: string;
-
-  /**
-   * URL of the light-theme favicon.
-   */
-  lightFaviconUrl?: string;
-
-  /**
-   * URL of the dark-theme favicon.
-   */
-  darkFaviconUrl?: string;
-}
-
-/**
- * Default theme used when no valid theme has been configured.
- */
-const DEFAULT_THEME: Theme = "light";
-
-/**
- * Local storage key used to persist the selected application theme.
- *
- * The value is shared across page navigations and browser refreshes.
- */
-const THEME_STORAGE_KEY = "ctx-cli-theme";
-
-/**
- * Root element used for class-based theme switching.
- */
-const THEME_ROOT = document.documentElement;
-
-const THEME_TOGGLE_SELECTOR = "[data-theme-toggle]";
-const THEME_TOGGLE_INDICATOR_SELECTOR = "[data-theme-toggle-indicator]";
+import {
+  DEFAULT_THEME,
+  THEME_ROOT,
+  THEME_STORAGE_KEY,
+  THEME_TOGGLE_INDICATOR_SELECTOR,
+  THEME_TOGGLE_SELECTOR,
+} from "./constants";
+import type { Theme, ThemeSideEffectOptions } from "./theme";
 
 /**
  * Returns the currently configured application theme.
@@ -199,9 +143,6 @@ function updateThemeToggleControls(theme: Theme): void {
       if (!indicator) {
         return;
       }
-
-      indicator.classList.toggle("translate-x-9.5", isDark);
-      indicator.classList.toggle("translate-x-0", !isDark);
 
       indicator.innerHTML = isDark
         ? `

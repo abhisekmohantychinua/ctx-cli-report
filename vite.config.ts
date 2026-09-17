@@ -15,6 +15,7 @@ export default defineConfig(({ command }) => ({
 
   build: {
     outDir: command === "serve" ? "dist" : resolve(import.meta.dirname, "dist"),
+    emptyOutDir: true,
     rolldownOptions: {
       input: {
         index: resolve(import.meta.dirname, "src/pages/index.html"),

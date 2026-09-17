@@ -1,0 +1,64 @@
+name: Release
+
+on:
+    push:
+        tags:
+            - "v*.*.*"
+
+permissions:
+    contents: write
+
+concurrency:
+    group: release-${{ github.ref }}
+    cancel-in-progress: false
+
+jobs:
+    release:
+        name: Build and publish release
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v7
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+                  cache: npm
+                  cache-dependency-path: package-lock.json
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Build application
+              run: npm run build
+
+            - name: Create release archive
+              shell: bash
+              env:
+                  RELEASE_TAG: ${{ github.ref_name }}
+              run: |
+                  set -euo pipefail
+
+                  version="${RELEASE_TAG#v}"
+                  archive_version="${version//./-}"
+                  archive_name="ctx-cli-report-v${archive_version}.zip"
+
+                  test -d dist
+                  test -f dist/index.html
+
+                  cd dist
+                  zip -r "../${archive_name}" .
+                  cd ..
+
+                  test -f "${archive_name}"
+                  echo "RELEASE_ARCHIVE=${archive_name}" >> "$GITHUB_ENV"
+
+            - name: Publish GitHub release
+              uses: softprops/action-gh-release@v3
+              with:
+                  tag_name: ${{ github.ref_name }}
+                  name: CTX CLI Report ${{ github.ref_name }}
+                  generate_release_notes: true
+                  files: ${{ env.RELEASE_ARCHIVE }}

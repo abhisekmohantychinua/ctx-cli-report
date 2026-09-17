@@ -167,65 +167,65 @@ describe("theme-toggle", () => {
   describe("applyThemeSideEffects", () => {
     it("updates the logo for light mode", () => {
       document.body.innerHTML =
-        '<img id="logo" src="old-logo.png" alt="Logo" />';
+        '<img id="logo" src="/logo-dark.svg" alt="Logo" />';
 
       applyThemeSideEffects("light", {
         logoSelector: "#logo",
-        lightLogoUrl: "logo.png",
-        darkLogoUrl: "logo-dark.png",
+        lightLogoUrl: "/logo-light.svg",
+        darkLogoUrl: "/logo-dark.svg",
       });
 
       expect(document.querySelector("#logo")).toHaveAttribute(
         "src",
-        "logo.png",
+        "/logo-light.svg",
       );
     });
 
     it("updates the logo for dark mode", () => {
       document.body.innerHTML =
-        '<img id="logo" src="old-logo.png" alt="Logo" />';
+        '<img id="logo" src="/logo-light.svg" alt="Logo" />';
 
       applyThemeSideEffects("dark", {
         logoSelector: "#logo",
-        lightLogoUrl: "logo.png",
-        darkLogoUrl: "logo-dark.png",
+        lightLogoUrl: "/logo-light.svg",
+        darkLogoUrl: "/logo-dark.svg",
       });
 
       expect(document.querySelector("#logo")).toHaveAttribute(
         "src",
-        "logo-dark.png",
+        "/logo-dark.svg",
       );
     });
 
     it("updates the favicon for light mode", () => {
       document.head.innerHTML =
-        '<link id="favicon" rel="icon" href="old-favicon.ico" />';
+        '<link id="favicon" rel="icon" href="/favicon-dark.svg" />';
 
       applyThemeSideEffects("light", {
         faviconSelector: "#favicon",
-        lightFaviconUrl: "favicon.ico",
-        darkFaviconUrl: "favicon-dark.ico",
+        lightFaviconUrl: "/favicon-light.svg",
+        darkFaviconUrl: "/favicon-dark.svg",
       });
 
       expect(document.querySelector("#favicon")).toHaveAttribute(
         "href",
-        "favicon.ico",
+        "/favicon-light.svg",
       );
     });
 
     it("updates the favicon for dark mode", () => {
       document.head.innerHTML =
-        '<link id="favicon" rel="icon" href="old-favicon.ico" />';
+        '<link id="favicon" rel="icon" href="/favicon-light.svg" />';
 
       applyThemeSideEffects("dark", {
         faviconSelector: "#favicon",
-        lightFaviconUrl: "favicon.ico",
-        darkFaviconUrl: "favicon-dark.ico",
+        lightFaviconUrl: "/favicon-light.svg",
+        darkFaviconUrl: "/favicon-dark.svg",
       });
 
       expect(document.querySelector("#favicon")).toHaveAttribute(
         "href",
-        "favicon-dark.ico",
+        "/favicon-dark.svg",
       );
     });
 

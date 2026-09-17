@@ -22,7 +22,14 @@ describe("theme/index", () => {
     bootstrapTheming();
 
     expect(initializeTheme).toHaveBeenCalledOnce();
-    expect(initializeTheme).toHaveBeenCalledWith();
+    expect(initializeTheme).toHaveBeenCalledWith({
+      logoSelector: "[data-theme-logo]",
+      lightLogoUrl: "/logo.png",
+      darkLogoUrl: "/logo-dark.png",
+      faviconSelector: "[data-theme-favicon]",
+      lightFaviconUrl: "/favicon.ico",
+      darkFaviconUrl: "/favicon-dark.ico",
+    });
   });
 
   it("restores the persisted theme when bootstrapping", async () => {

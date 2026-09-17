@@ -1,0 +1,11 @@
+{
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Generate a commit message with header from: Feature, Refactor, Fix, Test, Todo, Docs. Each header represents a section. Meaning of each header goes like this: Feature → new functionality, Refactor → code restructuring, Fix → bug fixes, Test → testing-related changes, Todo → tasks to be done, Docs → documentation related changes. Each file should be analyzed separately and understood in order to find out the changes. Multiple sections can be used based on staged changes. Format: Header followed by ':' and newline bullet points. Each bullet must start with '-' and use past tense verbs like Added, Updated, Removed, Refactored, Implemented. Keep it concise and well grouped. Do NOT use conventional commit format."
+    },
+    {
+      "file": ".vscode/copilot/commit-message.md"
+    }
+  ],
+  "editor.wordWrap": "on"
+}

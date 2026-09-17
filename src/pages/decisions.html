@@ -6,9 +6,94 @@
     <title>Document</title>
   </head>
   <body>
-    <div id="app">
-      <h1 class="text-3xl text-red-600 font-bold underline">Decisions</h1>
-    </div>
+    <header class="border-border bg-background border-b">
+      <div
+        class="mx-auto flex min-h-18 w-full items-center justify-between gap-6 px-8"
+      >
+        <!-- Brand -->
+        <a
+          href="/index.html"
+          class="flex shrink-0 items-center gap-3"
+          aria-label="CTX CLI overview"
+        >
+          <img
+            src="/logo.png"
+            alt="CTX CLI"
+            width="36"
+            height="36"
+            class="size-9 shrink-0"
+          />
+
+          <span class="text-foreground text-xl font-semibold tracking-tight">
+            CTX CLI
+          </span>
+        </a>
+
+        <!-- Header metadata and theme control -->
+        <div class="flex items-center gap-6">
+          <!-- Generated timestamp -->
+          <div class="flex flex-col gap-0.5">
+            <span class="text-muted text-xs font-medium"> Generated on </span>
+
+            <time
+              class="text-foreground text-sm tabular-nums"
+              datetime="2025-08-30T14:32:00"
+            >
+              2025-08-30 14:32
+            </time>
+          </div>
+
+          <!-- Divider -->
+          <div class="bg-border h-8 w-px" aria-hidden="true"></div>
+
+          <!-- Project information -->
+          <div class="flex flex-col gap-0.5">
+            <span class="text-muted text-xs font-medium"> Project </span>
+
+            <div class="text-foreground flex items-center gap-2 text-sm">
+              <iconify-icon
+                icon="mdi:folder-outline"
+                class="text-muted text-xl"
+                aria-hidden="true"
+              ></iconify-icon>
+
+              <span>ctx-cli</span>
+            </div>
+          </div>
+
+          <!-- Theme toggle -->
+          <button
+            type="button"
+            class="border-border bg-surface text-foreground hover:border-primary focus-visible:ring-primary relative inline-flex h-8 w-18 items-center rounded-full border p-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            data-theme-toggle
+            aria-label="Switch to dark theme"
+            title="Switch to dark theme"
+          >
+            <span
+              class="bg-primary text-background flex size-6 items-center justify-center rounded-full shadow-sm transition-transform"
+              data-theme-toggle-indicator
+            >
+              <iconify-icon
+                icon="mdi:white-balance-sunny"
+                class="text-base"
+                aria-hidden="true"
+              ></iconify-icon>
+            </span>
+
+            <span
+              class="text-muted absolute right-2 flex items-center justify-center"
+              aria-hidden="true"
+            >
+              <iconify-icon
+                icon="mdi:weather-night"
+                class="text-base"
+              ></iconify-icon>
+            </span>
+          </button>
+        </div>
+      </div>
+    </header>
+
     <script type="module" src="../main.ts"></script>
   </body>
 </html>

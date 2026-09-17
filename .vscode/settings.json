@@ -11,6 +11,8 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
-  "cSpell.words": ["preline"],
-  "mermaidChart.showGenerateDiagramCodeLens": false
+  "cSpell.words": ["iconify", "preline"],
+  "mermaidChart.showGenerateDiagramCodeLens": false,
+  "editor.codeLens": true,
+  "js/ts.referencesCodeLens.enabled": true
 }

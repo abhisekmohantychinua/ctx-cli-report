@@ -1,5 +1,6 @@
 import "./style.css";
 import "./theme";
+import "iconify-icon";
 
 import { loadContext } from "./data/loader";
 import { HSStaticMethods } from "preline/non-auto";

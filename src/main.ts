@@ -9,3 +9,7 @@ async function main() {
 }
 
 main().catch(console.error);
+
+window.addEventListener("DOMContentLoaded", () => {
+  console.log("Hello World after page structure loaded");
+});

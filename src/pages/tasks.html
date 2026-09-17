@@ -94,6 +94,107 @@
       </div>
     </header>
 
+    <div class="flex min-h-[calc(100vh-4.5rem)]">
+      <!-- Shared sidebar -->
+      <aside
+        class="border-border bg-surface flex w-64 shrink-0 flex-col border-r"
+        aria-label="Report navigation"
+      >
+        <div class="flex flex-1 flex-col gap-8 px-4 py-6">
+          <!-- Main navigation -->
+          <nav class="flex flex-col gap-1">
+            <p
+              class="text-muted px-3 pb-2 text-xs font-semibold uppercase tracking-wider"
+            >
+              Workspace
+            </p>
+
+            <a
+              href="./index.html"
+              class="bg-muted-background text-foreground flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium"
+              aria-current="page"
+            >
+              <iconify-icon
+                icon="mdi:view-dashboard-outline"
+                class="text-lg shrink-0"
+                aria-hidden="true"
+              ></iconify-icon>
+
+              <span>Overview</span>
+            </a>
+
+            <a
+              href="./sessions.html"
+              class="text-muted hover:bg-muted-background hover:text-foreground flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition"
+            >
+              <iconify-icon
+                icon="mdi:clock-outline"
+                class="text-lg shrink-0"
+                aria-hidden="true"
+              ></iconify-icon>
+
+              <span>Sessions</span>
+            </a>
+
+            <a
+              href="./tasks.html"
+              class="text-muted hover:bg-muted-background hover:text-foreground flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition"
+            >
+              <iconify-icon
+                icon="mdi:checkbox-marked-outline"
+                class="text-lg shrink-0"
+                aria-hidden="true"
+              ></iconify-icon>
+
+              <span>Tasks</span>
+            </a>
+
+            <a
+              href="./logs.html"
+              class="text-muted hover:bg-muted-background hover:text-foreground flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition"
+            >
+              <iconify-icon
+                icon="mdi:text-box-outline"
+                class="text-lg shrink-0"
+                aria-hidden="true"
+              ></iconify-icon>
+
+              <span>Logs</span>
+            </a>
+
+            <a
+              href="./decisions.html"
+              class="text-muted hover:bg-muted-background hover:text-foreground flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition"
+            >
+              <iconify-icon
+                icon="mdi:source-branch"
+                class="text-lg shrink-0"
+                aria-hidden="true"
+              ></iconify-icon>
+
+              <span>Decisions</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Sidebar footer -->
+        <div class="border-border border-t px-4 py-4">
+          <div class="text-muted flex items-center gap-2 px-3 text-xs">
+            <iconify-icon
+              icon="mdi:information-outline"
+              class="text-base shrink-0"
+              aria-hidden="true"
+            ></iconify-icon>
+
+            <span>Generated report</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Page-specific content -->
+      <main class="min-w-0 flex-1"></main>
+    </div>
+
     <script type="module" src="../main.ts"></script>
   </body>
 </html>

@@ -1,4 +1,4 @@
-import type { Theme } from "./theme";
+import type { Theme, ThemeSideEffectOptions } from "./theme";
 
 /**
  * Default theme used when no valid theme has been configured.
@@ -19,3 +19,13 @@ export const THEME_ROOT = document.documentElement;
 
 export const THEME_TOGGLE_SELECTOR = "[data-theme-toggle]";
 export const THEME_TOGGLE_INDICATOR_SELECTOR = "[data-theme-toggle-indicator]";
+
+export const DEFAULT_THEME_SIDE_EFFECT_OPTIONS: ThemeSideEffectOptions = {
+  logoSelector: "[data-theme-logo]",
+  lightLogoUrl: "/logo.png",
+  darkLogoUrl: "/logo-dark.png",
+
+  faviconSelector: "[data-theme-favicon]",
+  lightFaviconUrl: "/favicon.ico",
+  darkFaviconUrl: "/favicon-dark.ico",
+};

@@ -1,3 +1,5 @@
+import { DEFAULT_THEME_SIDE_EFFECT_OPTIONS } from "./constants";
+import type { ThemeSideEffectOptions } from "./theme";
 import { initializeTheme } from "./theme-toggle";
 
 /**
@@ -9,6 +11,11 @@ import { initializeTheme } from "./theme-toggle";
  * Theme-specific asset handling will be added when the report markup is
  * implemented.
  */
-export function bootstrapTheming(): void {
-  initializeTheme();
+export function bootstrapTheming(
+  options: Partial<ThemeSideEffectOptions> = {},
+): void {
+  initializeTheme({
+    ...DEFAULT_THEME_SIDE_EFFECT_OPTIONS,
+    ...options,
+  });
 }

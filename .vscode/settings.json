@@ -7,5 +7,9 @@
       "file": ".vscode/copilot/commit-message.md"
     }
   ],
-  "editor.wordWrap": "on"
+  "editor.wordWrap": "on",
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "cSpell.words": ["preline"]
 }

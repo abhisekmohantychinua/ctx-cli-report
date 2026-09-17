@@ -48,6 +48,8 @@ export interface ThemeSideEffectOptions {
  */
 const DEFAULT_THEME: Theme = "light";
 
+const THEME_STORAGE_KEY = "ctx-cli-theme";
+
 /**
  * Root element used for class-based theme switching.
  */
@@ -62,7 +64,13 @@ const THEME_TOGGLE_INDICATOR_SELECTOR = "[data-theme-toggle-indicator]";
  * Any state other than the supported `dark` class is treated as light.
  */
 export function getTheme(): Theme {
-  return THEME_ROOT.classList.contains("dark") ? "dark" : "light";
+  const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+
+  if (storedTheme === "dark" || storedTheme === "light") {
+    return storedTheme;
+  }
+
+  return DEFAULT_THEME;
 }
 
 /**
@@ -76,6 +84,8 @@ export function getTheme(): Theme {
 export function setTheme(theme: Theme): void {
   THEME_ROOT.classList.remove("light", "dark");
   THEME_ROOT.classList.add(theme);
+
+  window.localStorage.setItem(THEME_STORAGE_KEY, theme);
 }
 
 /**

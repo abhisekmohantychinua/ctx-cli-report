@@ -3,12 +3,206 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      data-theme-favicon
+      href="/favicon.ico"
+    />
+    <title>Sessions | CTX</title>
   </head>
+
   <body>
-    <div id="app">
-      <h1 class="text-3xl text-red-600 font-bold underline">Sessions</h1>
+    <header class="border-border bg-background border-b">
+      <div
+        class="mx-auto flex min-h-18 w-full items-center justify-between gap-6 px-8"
+      >
+        <!-- Brand -->
+        <a
+          href="./index.html"
+          class="flex shrink-0 items-center gap-3"
+          aria-label="CTX CLI overview"
+        >
+          <img
+            src="/logo.png"
+            alt="CTX CLI"
+            width="36"
+            height="36"
+            class="size-9 shrink-0"
+            data-theme-logo
+          />
+
+          <span class="text-foreground text-xl font-semibold tracking-tight">
+            CTX CLI
+          </span>
+        </a>
+
+        <!-- Header metadata and theme control -->
+        <div class="flex items-center gap-6">
+          <!-- Generated timestamp -->
+          <div class="flex flex-col gap-0.5">
+            <span class="text-muted text-xs font-medium"> Generated on </span>
+
+            <time
+              class="text-foreground text-sm tabular-nums"
+              datetime="2025-08-30T14:32:00"
+            >
+              2025-08-30 14:32
+            </time>
+          </div>
+
+          <!-- Divider -->
+          <div class="bg-border h-8 w-px" aria-hidden="true"></div>
+
+          <!-- Project information -->
+          <div class="flex flex-col gap-0.5">
+            <span class="text-muted text-xs font-medium"> Project </span>
+
+            <div class="text-foreground flex items-center gap-2 text-sm">
+              <iconify-icon
+                icon="mdi:folder-outline"
+                class="text-muted text-xl"
+                aria-hidden="true"
+              ></iconify-icon>
+
+              <span>ctx-cli</span>
+            </div>
+          </div>
+
+          <!-- Theme toggle -->
+          <button
+            type="button"
+            class="border-border bg-surface text-foreground hover:border-primary focus-visible:ring-primary relative inline-flex h-8 w-18 cursor-pointer items-center rounded-full border p-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            data-theme-toggle
+            aria-label="Switch to dark theme"
+            title="Switch to dark theme"
+          >
+            <span
+              data-theme-toggle-indicator
+              class="bg-primary text-background dark:text-primary flex size-6 translate-x-0 dark:translate-x-9.5 items-center justify-center rounded-full shadow-sm transition-transform duration-200"
+            >
+              <iconify-icon
+                icon="mdi:white-balance-sunny"
+                class="text-base"
+                aria-hidden="true"
+              ></iconify-icon>
+            </span>
+
+            <span
+              class="text-muted dark:text-background pointer-events-none absolute right-2 flex items-center justify-center"
+              aria-hidden="true"
+            >
+              <iconify-icon
+                icon="mdi:weather-night"
+                class="text-base"
+              ></iconify-icon>
+            </span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="flex min-h-[calc(100vh-4.5rem)]">
+      <!-- Shared sidebar -->
+      <aside
+        class="border-border bg-surface flex w-64 shrink-0 flex-col border-r"
+        aria-label="Report navigation"
+      >
+        <div class="flex flex-1 flex-col gap-8 px-4 py-6">
+          <!-- Main navigation -->
+          <nav class="flex flex-col gap-1">
+            <p
+              class="text-muted px-3 pb-2 text-xs font-semibold uppercase tracking-wider"
+            >
+              Workspace
+            </p>
+
+            <a
+              href="./index.html"
+              class="text-muted hover:bg-muted-background hover:text-foreground flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition"
+            >
+              <iconify-icon
+                icon="mdi:view-dashboard-outline"
+                class="text-lg shrink-0"
+                aria-hidden="true"
+              ></iconify-icon>
+
+              <span>Overview</span>
+            </a>
+
+            <a
+              href="./sessions.html"
+              class="bg-muted-background text-foreground flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium"
+              aria-current="page"
+            >
+              <iconify-icon
+                icon="mdi:clock-outline"
+                class="text-lg shrink-0"
+                aria-hidden="true"
+              ></iconify-icon>
+
+              <span>Sessions</span>
+            </a>
+
+            <a
+              href="./tasks.html"
+              class="text-muted hover:bg-muted-background hover:text-foreground flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition"
+            >
+              <iconify-icon
+                icon="mdi:checkbox-marked-outline"
+                class="text-lg shrink-0"
+                aria-hidden="true"
+              ></iconify-icon>
+
+              <span>Tasks</span>
+            </a>
+
+            <a
+              href="./logs.html"
+              class="text-muted hover:bg-muted-background hover:text-foreground flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition"
+            >
+              <iconify-icon
+                icon="mdi:text-box-outline"
+                class="text-lg shrink-0"
+                aria-hidden="true"
+              ></iconify-icon>
+
+              <span>Logs</span>
+            </a>
+
+            <a
+              href="./decisions.html"
+              class="text-muted hover:bg-muted-background hover:text-foreground flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition"
+            >
+              <iconify-icon
+                icon="mdi:source-branch"
+                class="text-lg shrink-0"
+                aria-hidden="true"
+              ></iconify-icon>
+
+              <span>Decisions</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Sidebar footer -->
+        <div class="border-border border-t px-4 py-4">
+          <div class="text-muted flex items-center gap-2 px-3 text-xs">
+            <iconify-icon
+              icon="mdi:information-outline"
+              class="text-base shrink-0"
+              aria-hidden="true"
+            ></iconify-icon>
+
+            <span>Generated report</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Page-specific content -->
+      <main class="min-w-0 flex-1"></main>
     </div>
+
     <script type="module" src="../main.ts"></script>
   </body>
 </html>

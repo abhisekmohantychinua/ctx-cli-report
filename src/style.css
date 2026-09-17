@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap");
+
 @import "tailwindcss";
 
 @import "../node_modules/preline/variants.css";
@@ -11,3 +13,267 @@
 
 /* Preline Themes */
 /* @import "../node_modules/preline/preline/theme.css"; */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+
+  --ctx-background-color: #ffffff;
+  --ctx-background-surface-color: #f6f3ec;
+
+  --ctx-font-color-base: #0f1115;
+
+  --ctx-color-primary: #824d00;
+  --ctx-color-primary-dark: #7d4900;
+  --ctx-color-primary-darker: #754400;
+  --ctx-color-primary-darkest: #6a3d00;
+  --ctx-color-primary-light: #8b5500;
+  --ctx-color-primary-lighter: #955d00;
+  --ctx-color-primary-lightest: #9c6200;
+
+  --ctx-font-family-base: "Geist", monospace;
+  --ctx-font-family-monospace: "Geist Mono", monospace;
+
+  --ctx-background: var(--ctx-background-color);
+  --ctx-background-surface: var(--ctx-background-surface-color);
+  --ctx-font-color: var(--ctx-font-color-base);
+
+  --ctx-primary: var(--ctx-color-primary);
+  --ctx-primary-dark: var(--ctx-color-primary-dark);
+  --ctx-primary-darker: var(--ctx-color-primary-darker);
+  --ctx-primary-darkest: var(--ctx-color-primary-darkest);
+  --ctx-primary-light: var(--ctx-color-primary-light);
+  --ctx-primary-lighter: var(--ctx-color-primary-lighter);
+  --ctx-primary-lightest: var(--ctx-color-primary-lightest);
+
+  --ctx-border-color: #dedad1;
+  --ctx-border-color-subtle: #ebe7df;
+  --ctx-border-color-strong: #bdb7aa;
+
+  --ctx-muted-color: #6b6a67;
+  --ctx-muted-background: #eeebe4;
+
+  --ctx-success: #287a4b;
+  --ctx-success-background: #e5f3e9;
+
+  --ctx-warning: #996000;
+  --ctx-warning-background: #fff1d6;
+
+  --ctx-danger: #b42318;
+  --ctx-danger-background: #fce8e6;
+
+  --ctx-info: #245f9e;
+  --ctx-info-background: #e6f0fb;
+
+  --ctx-radius-sm: 0.25rem;
+  --ctx-radius-md: 0.5rem;
+  --ctx-radius-lg: 0.75rem;
+  --ctx-radius-xl: 1rem;
+
+  --ctx-shadow-sm: 0 1px 2px rgb(15 17 21 / 0.05);
+  --ctx-shadow-md: 0 4px 12px rgb(15 17 21 / 0.08);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --ctx-background-color: #1a1d22;
+  --ctx-background-surface-color: #0f1115;
+
+  --ctx-font-color-base: #f6f3ec;
+
+  --ctx-color-primary: #f0b35a;
+  --ctx-color-primary-dark: #d99a3d;
+  --ctx-color-primary-darker: #c9872d;
+  --ctx-color-primary-darkest: #b8781f;
+  --ctx-color-primary-light: #f4c06e;
+  --ctx-color-primary-lighter: #f8d18f;
+  --ctx-color-primary-lightest: #fbe1b5;
+
+  --ctx-border-color: #393e47;
+  --ctx-border-color-subtle: #292e36;
+  --ctx-border-color-strong: #565d68;
+
+  --ctx-muted-color: #a5a8ae;
+  --ctx-muted-background: #242830;
+
+  --ctx-success: #7ed6a1;
+  --ctx-success-background: #183a28;
+
+  --ctx-warning: #f0b35a;
+  --ctx-warning-background: #423016;
+
+  --ctx-danger: #ff9b91;
+  --ctx-danger-background: #48201e;
+
+  --ctx-info: #8dbcf0;
+  --ctx-info-background: #1c344d;
+
+  --ctx-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.2);
+  --ctx-shadow-md: 0 4px 16px rgb(0 0 0 / 0.25);
+}
+
+@theme inline {
+  --color-background: var(--ctx-background-color);
+  --color-surface: var(--ctx-background-surface-color);
+
+  --color-foreground: var(--ctx-font-color-base);
+  --color-muted: var(--ctx-muted-color);
+  --color-muted-background: var(--ctx-muted-background);
+
+  --color-primary: var(--ctx-color-primary);
+  --color-primary-dark: var(--ctx-color-primary-dark);
+  --color-primary-darker: var(--ctx-color-primary-darker);
+  --color-primary-darkest: var(--ctx-color-primary-darkest);
+  --color-primary-light: var(--ctx-color-primary-light);
+  --color-primary-lighter: var(--ctx-color-primary-lighter);
+  --color-primary-lightest: var(--ctx-color-primary-lightest);
+
+  --color-border: var(--ctx-border-color);
+  --color-border-subtle: var(--ctx-border-color-subtle);
+  --color-border-strong: var(--ctx-border-color-strong);
+
+  --color-success: var(--ctx-success);
+  --color-success-background: var(--ctx-success-background);
+
+  --color-warning: var(--ctx-warning);
+  --color-warning-background: var(--ctx-warning-background);
+
+  --color-danger: var(--ctx-danger);
+  --color-danger-background: var(--ctx-danger-background);
+
+  --color-info: var(--ctx-info);
+  --color-info-background: var(--ctx-info-background);
+
+  --font-sans: var(--ctx-font-family-base);
+  --font-mono: var(--ctx-font-family-monospace);
+
+  --radius-sm: var(--ctx-radius-sm);
+  --radius-md: var(--ctx-radius-md);
+  --radius-lg: var(--ctx-radius-lg);
+  --radius-xl: var(--ctx-radius-xl);
+
+  --shadow-sm: var(--ctx-shadow-sm);
+  --shadow-md: var(--ctx-shadow-md);
+}
+
+@layer base {
+  html {
+    @apply bg-background text-foreground font-sans;
+  }
+
+  body {
+    @apply min-w-[320px] bg-background text-foreground font-sans;
+    text-rendering: optimizeLegibility;
+  }
+
+  code,
+  pre,
+  kbd,
+  samp {
+    @apply font-mono;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    @apply font-[inherit];
+  }
+
+  ::selection {
+    @apply bg-primary text-background;
+  }
+}
+
+@layer components {
+  .hs-overlay {
+    --hs-overlay-backdrop-bg: rgb(15 17 21 / 0.55);
+  }
+
+  .hs-dropdown-menu,
+  .hs-tooltip-content,
+  .hs-select-menu,
+  .hs-combo-box-menu,
+  .hs-datepicker {
+    @apply bg-surface text-foreground border-border;
+  }
+
+  .hs-dropdown-menu,
+  .hs-select-menu,
+  .hs-combo-box-menu,
+  .hs-datepicker {
+    @apply border border-solid rounded-lg shadow-md;
+  }
+
+  .hs-dropdown-menu [role="menuitem"],
+  .hs-select-menu [role="option"],
+  .hs-combo-box-menu [role="option"] {
+    @apply text-foreground;
+  }
+
+  .hs-dropdown-menu [role="menuitem"]:hover,
+  .hs-select-menu [role="option"]:hover,
+  .hs-combo-box-menu [role="option"]:hover,
+  .hs-dropdown-menu [role="menuitem"]:focus,
+  .hs-select-menu [role="option"]:focus,
+  .hs-combo-box-menu [role="option"]:focus {
+    @apply bg-muted-background text-foreground;
+  }
+
+  .hs-overlay-backdrop {
+    @apply bg-[rgb(15_17_21_/_0.55)];
+  }
+
+  .hs-overlay-open .hs-overlay-backdrop {
+    @apply opacity-100;
+  }
+
+  .hs-accordion-toggle {
+    @apply text-foreground;
+  }
+
+  .hs-accordion-content {
+    @apply text-muted;
+  }
+
+  .hs-tooltip-content {
+    @apply bg-foreground text-background;
+  }
+
+  .hs-tooltip-content::before {
+    @apply border-foreground;
+  }
+
+  .hs-carousel-pagination button {
+    @apply bg-border-strong;
+  }
+
+  .hs-carousel-pagination button.active,
+  .hs-carousel-pagination button[aria-current="true"] {
+    @apply bg-primary;
+  }
+}
+
+@layer utilities {
+  .ctx-surface {
+    @apply bg-surface;
+  }
+
+  .ctx-page {
+    @apply bg-background text-foreground;
+  }
+
+  .ctx-muted {
+    @apply text-muted;
+  }
+
+  .ctx-border {
+    @apply border-border;
+  }
+
+  .ctx-focus-ring {
+    @apply outline-2 outline-primary outline-offset-2;
+  }
+}

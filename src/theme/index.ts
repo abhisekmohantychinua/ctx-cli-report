@@ -10,5 +10,3 @@ import { initializeTheme } from "./theme-toggle";
 export function bootstrapTheming(): void {
   initializeTheme();
 }
-
-bootstrapTheming();

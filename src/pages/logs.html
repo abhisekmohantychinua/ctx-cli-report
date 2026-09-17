@@ -64,14 +64,14 @@
           <!-- Theme toggle -->
           <button
             type="button"
-            class="border-border bg-surface text-foreground hover:border-primary focus-visible:ring-primary relative inline-flex h-8 w-18 items-center rounded-full border p-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            class="border-border bg-surface text-foreground hover:border-primary focus-visible:ring-primary relative inline-flex h-8 w-[4.5rem] cursor-pointer items-center rounded-full border p-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             data-theme-toggle
             aria-label="Switch to dark theme"
             title="Switch to dark theme"
           >
             <span
-              class="bg-primary text-background flex size-6 items-center justify-center rounded-full shadow-sm transition-transform"
               data-theme-toggle-indicator
+              class="bg-primary text-background flex size-6 translate-x-0 items-center justify-center rounded-full shadow-sm transition-transform duration-200"
             >
               <iconify-icon
                 icon="mdi:white-balance-sunny"
@@ -81,7 +81,7 @@
             </span>
 
             <span
-              class="text-muted absolute right-2 flex items-center justify-center"
+              class="text-muted pointer-events-none absolute right-2 flex items-center justify-center"
               aria-hidden="true"
             >
               <iconify-icon

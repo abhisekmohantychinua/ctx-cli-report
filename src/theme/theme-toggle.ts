@@ -53,6 +53,9 @@ const DEFAULT_THEME: Theme = "light";
  */
 const THEME_ROOT = document.documentElement;
 
+const THEME_TOGGLE_SELECTOR = "[data-theme-toggle]";
+const THEME_TOGGLE_INDICATOR_SELECTOR = "[data-theme-toggle-indicator]";
+
 /**
  * Returns the currently active theme.
  *
@@ -118,10 +121,7 @@ export function applyThemeSideEffects(
 }
 
 /**
- * Initializes the theme system.
- *
- * Initialization ensures that the document root has a valid theme class
- * and applies all configured theme-dependent side effects.
+ * Initializes the theme system and connects theme toggle controls.
  *
  * @param options Optional selectors and asset URLs.
  * @returns The active theme after initialization.
@@ -131,8 +131,67 @@ export function initializeTheme(options: ThemeSideEffectOptions = {}): Theme {
 
   setTheme(currentTheme);
   applyThemeSideEffects(currentTheme, options);
+  updateThemeToggleControls(currentTheme);
+
+  document
+    .querySelectorAll<HTMLButtonElement>(THEME_TOGGLE_SELECTOR)
+    .forEach((toggle) => {
+      toggle.addEventListener("click", () => {
+        const nextTheme = toggleTheme(options);
+
+        updateThemeToggleControls(nextTheme);
+      });
+    });
 
   return currentTheme;
+}
+
+/**
+ * Updates the appearance and accessibility state of all theme toggles.
+ */
+function updateThemeToggleControls(theme: Theme): void {
+  const isDark = theme === "dark";
+
+  document
+    .querySelectorAll<HTMLButtonElement>(THEME_TOGGLE_SELECTOR)
+    .forEach((toggle) => {
+      const indicator = toggle.querySelector<HTMLElement>(
+        THEME_TOGGLE_INDICATOR_SELECTOR,
+      );
+
+      toggle.setAttribute(
+        "aria-label",
+        isDark ? "Switch to light theme" : "Switch to dark theme",
+      );
+
+      toggle.setAttribute(
+        "title",
+        isDark ? "Switch to light theme" : "Switch to dark theme",
+      );
+
+      if (!indicator) {
+        return;
+      }
+
+      indicator.classList.toggle("translate-x-9.5", isDark);
+      indicator.classList.toggle("translate-x-0", !isDark);
+
+      indicator.innerHTML = isDark
+        ? `
+          <iconify-icon
+            icon="mdi:weather-night"
+            class="text-base"
+            aria-hidden="true"
+          ></iconify-icon>
+        `
+        : `
+          <iconify-icon
+            icon="mdi:white-balance-sunny"
+            class="text-base"
+            aria-hidden="true"
+          ></iconify-icon>
+        `;
+    });
 }
 
 /**

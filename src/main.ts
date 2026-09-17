@@ -1,15 +1,16 @@
 import "./style.css";
 
 import { loadContext } from "./data/loader";
+import { HSStaticMethods } from "preline/non-auto";
 
 async function main() {
-  const context = await loadContext();
-
-  console.log("Loaded CTX context:", context);
+  await loadContext();
+  console.log("Loaded CTX context...");
 }
 
 main().catch(console.error);
 
-window.addEventListener("DOMContentLoaded", () => {
-  console.log("Hello World after page structure loaded");
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM content loaded...");
+  HSStaticMethods.autoInit();
 });

@@ -1,35 +1,52 @@
 import "./style.css";
 import "iconify-icon";
 
-import { loadContext } from "./data/loader";
 import { HSStaticMethods } from "preline/non-auto";
+
+import { bootstrapData } from "./data";
 import { bootstrapTheming } from "./theme";
 
 /**
- * Initializes the application after the document has loaded.
+ * Waits until the document is ready for client-side initialization.
  *
- * Registers a `DOMContentLoaded` listener that initializes the theme system
- * and automatically initializes Preline components.
+ * If the DOM is still loading, this resolves when `DOMContentLoaded` fires.
+ * Otherwise, it resolves immediately.
+ *
+ * @returns A promise that resolves when the DOM is ready.
  */
-export function initializeApp(): void {
-  document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM content loaded...");
+function onDomReady(): Promise<void> {
+  if (document.readyState === "loading") {
+    return new Promise((resolve) => {
+      document.addEventListener("DOMContentLoaded", () => resolve(), {
+        once: true,
+      });
+    });
+  }
 
-    bootstrapTheming();
-    HSStaticMethods.autoInit();
-  });
+  return Promise.resolve();
 }
 
 /**
- * Loads the CTX project context and reports successful loading.
+ * Bootstraps the CTX CLI Report application.
  *
- * Any loading error is handled by the application entry point.
+ * Application startup requires both the report data and the DOM to be ready.
+ * These prerequisites are initialized independently and then client-side
+ * application features are initialized once both are available.
+ *
+ * @returns A promise that resolves after application startup.
  */
-async function main(): Promise<void> {
-  await loadContext();
-  console.log("Loaded CTX context...");
+async function bootstrapApplication(): Promise<void> {
+  const [report] = await Promise.all([bootstrapData(), onDomReady()]);
+
+  console.log("Loaded CTX report data...", report);
+
+  bootstrapTheming();
+  HSStaticMethods.autoInit();
+
+  // Rendering is deferred until the report page components are implemented.
+  // TODO: Render report pages using `report`.
 }
 
-main().catch(console.error);
-
-initializeApp();
+bootstrapApplication().catch((error: unknown) => {
+  console.error("Failed to initialize application.", error);
+});

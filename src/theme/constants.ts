@@ -22,10 +22,10 @@ export const THEME_TOGGLE_INDICATOR_SELECTOR = "[data-theme-toggle-indicator]";
 
 export const DEFAULT_THEME_SIDE_EFFECT_OPTIONS: ThemeSideEffectOptions = {
   logoSelector: "[data-theme-logo]",
-  lightLogoUrl: "/logo.png",
-  darkLogoUrl: "/logo-dark.png",
+  lightLogoUrl: import.meta.env.BASE_URL + "logo.png",
+  darkLogoUrl: import.meta.env.BASE_URL + "logo-dark.png",
 
   faviconSelector: "[data-theme-favicon]",
-  lightFaviconUrl: "/favicon.ico",
-  darkFaviconUrl: "/favicon-dark.ico",
+  lightFaviconUrl: import.meta.env.BASE_URL + "favicon.ico",
+  darkFaviconUrl: import.meta.env.BASE_URL + "favicon-dark.ico",
 };

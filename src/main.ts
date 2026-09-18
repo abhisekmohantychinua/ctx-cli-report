@@ -1,35 +1,39 @@
 import "./style.css";
 import "iconify-icon";
 
-import { loadContext } from "./data/loader";
 import { HSStaticMethods } from "preline/non-auto";
+
+import { bootstrapData } from "./data";
 import { bootstrapTheming } from "./theme";
 
 /**
- * Initializes the application after the document has loaded.
+ * Bootstraps the CTX CLI Report application.
  *
- * Registers a `DOMContentLoaded` listener that initializes the theme system
- * and automatically initializes Preline components.
+ * Application startup consists of two phases:
+ *
+ * 1. Load and process the report data.
+ * 2. Initialize client-side UI after the DOM is ready.
+ *
+ * Any initialization error is propagated to the application entry point.
+ *
+ * @returns A promise that resolves after startup registration.
  */
-export function initializeApp(): void {
+async function bootstrapApplication(): Promise<void> {
+  const report = await bootstrapData();
+
+  console.log("Loaded CTX report data...", report);
+
   document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM content loaded...");
 
     bootstrapTheming();
     HSStaticMethods.autoInit();
+
+    // Rendering is deferred until the report page components are implemented.
+    // TODO: Render report pages using `report`.
   });
 }
 
-/**
- * Loads the CTX project context and reports successful loading.
- *
- * Any loading error is handled by the application entry point.
- */
-async function main(): Promise<void> {
-  await loadContext();
-  console.log("Loaded CTX context...");
-}
-
-main().catch(console.error);
-
-initializeApp();
+bootstrapApplication().catch((error: unknown) => {
+  console.error("Failed to initialize application.", error);
+});

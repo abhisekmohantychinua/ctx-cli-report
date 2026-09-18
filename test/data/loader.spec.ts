@@ -1,157 +1,160 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { loadContext } from "../../src/data/loader";
 import type { RawReportData } from "../../src/data/models/raw";
 
 describe("data/loader", () => {
-  beforeEach(() => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
     vi.restoreAllMocks();
   });
 
-  it("loads the CTX report payload from /ctx.json", async () => {
-    const rawData = {
-      metadata: {
-        project: {
-          name: "example",
-          root: "/projects/example",
-          createdAt: "2026-09-01T10:00:00",
-        },
-        ctxVersion: "1.0.0",
-        timezone: "Asia/Kolkata",
-        dataRange: {
-          firstActivity: "2026-09-01T10:00:00",
-          lastActivity: "2026-09-01T12:00:00",
-        },
+  const rawData = {
+    metadata: {
+      project: {
+        name: "example",
+        root: "/projects/example",
+        createdAt: "2026-09-01T10:00:00",
       },
-      sessions: {
-        records: [],
-        statistics: {
-          count: 0,
-          completedCount: 0,
-          activeCount: 0,
-          totalDuration: 0,
-          averageDuration: 0,
-          medianDuration: 0,
-          longestDuration: 0,
-          shortestDuration: 0,
-        },
-        durationDistribution: [],
-        activity: {
-          firstStart: "",
-          latestEnd: "",
-          calendarDays: 0,
-          activeDays: 0,
-          inactiveDays: 0,
-          dailyCounts: [],
-          dailyDurations: [],
-          startByHour: [],
-          startByDayOfWeek: [],
-          averageStartTime: "",
-          peakStartHour: 0,
-        },
-        gaps: {
-          values: [],
-          average: 0,
-          median: 0,
-          longest: 0,
-          shortest: 0,
-          distribution: [],
-        },
+      ctxVersion: "1.0.0",
+      timezone: "Asia/Kolkata",
+      dataRange: {
+        firstActivity: "2026-09-01T10:00:00",
+        lastActivity: "2026-09-01T12:00:00",
       },
-      tasks: {
-        records: [],
-        statistics: {
-          count: 0,
-          completedCount: 0,
-          pendingCount: 0,
-          inProgressCount: 0,
-          blockedCount: 0,
-          openCount: 0,
-          rootCount: 0,
-          subtaskCount: 0,
-          maxDepth: 0,
-          averageCompletionDuration: null,
-          medianCompletionDuration: null,
-          longestCompletionDuration: null,
-          shortestCompletionDuration: null,
-        },
-        statusDistribution: [],
-        activity: {
-          createdByDay: [],
-          completedByDay: [],
-        },
-        hierarchy: {
-          tree: [],
-          orphans: [],
-          cycles: [],
-        },
-        blocked: [],
+    },
+    sessions: {
+      records: [],
+      statistics: {
+        count: 0,
+        completedCount: 0,
+        activeCount: 0,
+        totalDuration: 0,
+        averageDuration: 0,
+        medianDuration: 0,
+        longestDuration: 0,
+        shortestDuration: 0,
       },
-      logs: {
-        records: [],
-        statistics: {
-          count: 0,
-          unlinkedCount: 0,
-          firstTimestamp: "",
-          latestTimestamp: "",
-          byType: {},
-          issuesCount: 0,
-          attemptsCount: 0,
-          logsPerSession: null,
-          logsPerTask: null,
-          tasksWithLogs: 0,
-          tasksWithoutLogs: 0,
-        },
-        activity: {
-          byDay: [],
-          byHour: [],
-        },
-        taskAnalysis: {
-          mostLoggedTasks: [],
-          tasksWithoutLogs: [],
-          issuesByTask: [],
-          attemptsByTask: [],
-          repeatedAttempts: [],
-        },
-        invalidReferences: [],
+      durationDistribution: [],
+      activity: {
+        firstStart: "",
+        latestEnd: "",
+        calendarDays: 0,
+        activeDays: 0,
+        inactiveDays: 0,
+        dailyCounts: [],
+        dailyDurations: [],
+        startByHour: [],
+        startByDayOfWeek: [],
+        averageStartTime: "",
+        peakStartHour: 0,
       },
-      decisions: {
-        records: [],
-        statistics: {
-          count: 0,
-          unlinkedCount: 0,
-          firstTimestamp: "",
-          latestTimestamp: "",
-          byTopic: [],
-          repeatedTopics: [],
-          uncategorizedCount: 0,
-          byTag: [],
-        },
-        references: {
-          byType: {},
-          tasksWithDecisions: [],
-          sessionsWithDecisions: [],
-          invalid: [],
-        },
-        activity: {
-          byDay: [],
-        },
+      gaps: {
+        values: [],
+        average: 0,
+        median: 0,
+        longest: 0,
+        shortest: 0,
+        distribution: [],
+      },
+    },
+    tasks: {
+      records: [],
+      statistics: {
+        count: 0,
+        completedCount: 0,
+        pendingCount: 0,
+        inProgressCount: 0,
+        blockedCount: 0,
+        openCount: 0,
+        rootCount: 0,
+        subtaskCount: 0,
+        maxDepth: 0,
+        averageCompletionDuration: null,
+        medianCompletionDuration: null,
+        longestCompletionDuration: null,
+        shortestCompletionDuration: null,
+      },
+      statusDistribution: [],
+      activity: {
+        createdByDay: [],
+        completedByDay: [],
+      },
+      hierarchy: {
+        tree: [],
+        orphans: [],
+        cycles: [],
+      },
+      blocked: [],
+    },
+    logs: {
+      records: [],
+      statistics: {
+        count: 0,
+        unlinkedCount: 0,
+        firstTimestamp: "",
+        latestTimestamp: "",
+        byType: {},
+        issuesCount: 0,
+        attemptsCount: 0,
+        logsPerSession: null,
+        logsPerTask: null,
+        tasksWithLogs: 0,
+        tasksWithoutLogs: 0,
       },
       activity: {
-        recent: [],
-        timeline: [],
+        byDay: [],
+        byHour: [],
       },
-      integrity: {
-        valid: true,
-        invalidTimestamps: [],
-        invalidReferences: [],
-        invalidParentReferences: [],
-        orphanTasks: [],
-        cyclicTasks: [],
-        missingRequiredFields: [],
-        limitations: [],
+      taskAnalysis: {
+        mostLoggedTasks: [],
+        tasksWithoutLogs: [],
+        issuesByTask: [],
+        attemptsByTask: [],
+        repeatedAttempts: [],
       },
-    } satisfies RawReportData;
+      invalidReferences: [],
+    },
+    decisions: {
+      records: [],
+      statistics: {
+        count: 0,
+        unlinkedCount: 0,
+        firstTimestamp: "",
+        latestTimestamp: "",
+        byTopic: [],
+        repeatedTopics: [],
+        uncategorizedCount: 0,
+        byTag: [],
+      },
+      references: {
+        byType: {},
+        tasksWithDecisions: [],
+        sessionsWithDecisions: [],
+        invalid: [],
+      },
+      activity: {
+        byDay: [],
+      },
+    },
+    activity: {
+      recent: [],
+      timeline: [],
+    },
+    integrity: {
+      valid: true,
+      invalidTimestamps: [],
+      invalidReferences: [],
+      invalidParentReferences: [],
+      orphanTasks: [],
+      cyclicTasks: [],
+      missingRequiredFields: [],
+      limitations: [],
+    },
+  } satisfies RawReportData;
+
+  it("loads ctx.json from the root path outside production", async () => {
+    vi.stubEnv("PROD", false);
 
     const response: Pick<Response, "ok" | "status" | "json"> = {
       ok: true,
@@ -167,6 +170,24 @@ describe("data/loader", () => {
 
     expect(fetchMock).toHaveBeenCalledOnce();
     expect(fetchMock).toHaveBeenCalledWith("/ctx.json");
+    expect(response.json).toHaveBeenCalledOnce();
+    expect(result).toEqual(rawData);
+  });
+
+  it("loads ctx.json from the configured base path", async () => {
+    vi.stubEnv("BASE_URL", "./");
+
+    const response = {
+      ok: true,
+      json: vi.fn().mockResolvedValue(rawData),
+    } as unknown as Response;
+
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(response);
+
+    const result = await loadContext();
+
+    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(fetchMock).toHaveBeenCalledWith("./ctx.json");
     expect(response.json).toHaveBeenCalledOnce();
     expect(result).toEqual(rawData);
   });

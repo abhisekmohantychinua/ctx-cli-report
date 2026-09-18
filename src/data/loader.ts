@@ -7,7 +7,8 @@ import type { RawReportData } from "./models/raw";
  * @throws If the asset cannot be fetched successfully.
  */
 export async function loadContext(): Promise<RawReportData> {
-  const response = await fetch("/ctx.json");
+  const contextPath = import.meta.env.BASE_URL + "ctx.json";
+  const response = await fetch(contextPath);
 
   if (!response.ok) {
     throw new Error(`Failed to load ctx.json: ${response.status}`);

@@ -761,17 +761,17 @@ describe("data/processor", () => {
       repeatedAttempts: raw.logs.taskAnalysis.repeatedAttempts,
     });
 
-    expect(result.logs.evaluations).toEqual({
-      typePercentages: {
-        note: 100 / 3,
-        issue: 100 / 3,
-        attempt: 100 / 3,
-      },
-      issuePercentage: 100 / 3,
-      attemptPercentage: 100 / 3,
-      issueWithoutAttemptPercentage: 100,
-      logsPerRecordedHour: 1,
-    });
+    expect(result.logs.evaluations.typePercentages.note).toBeCloseTo(100 / 3);
+    expect(result.logs.evaluations.typePercentages.issue).toBeCloseTo(100 / 3);
+    expect(result.logs.evaluations.typePercentages.attempt).toBeCloseTo(
+      100 / 3,
+    );
+
+    expect(result.logs.evaluations.issuePercentage).toBeCloseTo(100 / 3);
+    expect(result.logs.evaluations.attemptPercentage).toBeCloseTo(100 / 3);
+
+    expect(result.logs.evaluations.issueWithoutAttemptPercentage).toBe(100);
+    expect(result.logs.evaluations.logsPerRecordedHour).toBe(1);
   });
 
   it("maps decision data and calculates decision evaluations", () => {

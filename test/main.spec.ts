@@ -42,8 +42,11 @@ describe("main", () => {
 
     await import("../src/main");
 
+    await vi.waitFor(() => {
+      expect(mocks.bootstrapTheming).toHaveBeenCalledOnce();
+    });
+
     expect(mocks.bootstrapData).toHaveBeenCalledOnce();
-    expect(mocks.bootstrapTheming).toHaveBeenCalledOnce();
     expect(mocks.autoInit).toHaveBeenCalledOnce();
   });
 
@@ -56,24 +59,34 @@ describe("main", () => {
 
     mocks.bootstrapData.mockResolvedValue(report);
 
+    const originalReadyState = document.readyState;
+
     Object.defineProperty(document, "readyState", {
       configurable: true,
-      value: "loading",
+      get: () => "loading",
     });
 
-    const mainPromise = import("../src/main");
+    try {
+      await import("../src/main");
 
-    await Promise.resolve();
+      await Promise.resolve();
 
-    expect(mocks.bootstrapTheming).not.toHaveBeenCalled();
-    expect(mocks.autoInit).not.toHaveBeenCalled();
+      expect(mocks.bootstrapTheming).not.toHaveBeenCalled();
+      expect(mocks.autoInit).not.toHaveBeenCalled();
 
-    document.dispatchEvent(new Event("DOMContentLoaded"));
+      document.dispatchEvent(new Event("DOMContentLoaded"));
 
-    await mainPromise;
+      await vi.waitFor(() => {
+        expect(mocks.bootstrapTheming).toHaveBeenCalledOnce();
+      });
 
-    expect(mocks.bootstrapTheming).toHaveBeenCalledOnce();
-    expect(mocks.autoInit).toHaveBeenCalledOnce();
+      expect(mocks.autoInit).toHaveBeenCalledOnce();
+    } finally {
+      Object.defineProperty(document, "readyState", {
+        configurable: true,
+        value: originalReadyState,
+      });
+    }
   });
 
   it("does not initialize the application when data loading fails", async () => {

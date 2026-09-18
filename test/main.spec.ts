@@ -1,49 +1,96 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const bootstrapTheming = vi.fn();
-const autoInit = vi.fn();
+const mocks = vi.hoisted(() => ({
+  bootstrapData: vi.fn(),
+  bootstrapTheming: vi.fn(),
+  autoInit: vi.fn(),
+}));
 
-vi.mock("preline/non-auto", () => ({
-  HSStaticMethods: {
-    autoInit,
-  },
+vi.mock("../src/data", () => ({
+  bootstrapData: mocks.bootstrapData,
 }));
 
 vi.mock("../src/theme", () => ({
-  bootstrapTheming,
+  bootstrapTheming: mocks.bootstrapTheming,
 }));
 
-describe("main entry point", async () => {
-  await import("../src/main");
+vi.mock("preline/non-auto", () => ({
+  HSStaticMethods: {
+    autoInit: mocks.autoInit,
+  },
+}));
 
+describe("main", () => {
   beforeEach(() => {
-    bootstrapTheming.mockReset();
-    autoInit.mockReset();
+    vi.resetModules();
+    vi.clearAllMocks();
 
-    document.documentElement.className = "";
     document.body.innerHTML = "";
+
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "log").mockImplementation(() => {});
   });
 
-  it("initializes theming and Preline after DOMContentLoaded", () => {
-    document.dispatchEvent(new Event("DOMContentLoaded"));
+  it("bootstraps the application after data and DOM are ready", async () => {
+    const report = {
+      metadata: {
+        id: "project-1",
+      },
+    };
 
-    expect(bootstrapTheming).toHaveBeenCalledTimes(1);
-    expect(autoInit).toHaveBeenCalledTimes(1);
+    mocks.bootstrapData.mockResolvedValue(report);
+
+    await import("../src/main");
+
+    expect(mocks.bootstrapData).toHaveBeenCalledOnce();
+    expect(mocks.bootstrapTheming).toHaveBeenCalledOnce();
+    expect(mocks.autoInit).toHaveBeenCalledOnce();
   });
 
-  it("initializes theming before Preline", () => {
-    const initializationOrder: string[] = [];
+  it("waits for DOMContentLoaded before initializing the application", async () => {
+    const report = {
+      metadata: {
+        id: "project-1",
+      },
+    };
 
-    bootstrapTheming.mockImplementation(() => {
-      initializationOrder.push("theme");
+    mocks.bootstrapData.mockResolvedValue(report);
+
+    Object.defineProperty(document, "readyState", {
+      configurable: true,
+      value: "loading",
     });
 
-    autoInit.mockImplementation(() => {
-      initializationOrder.push("preline");
-    });
+    const mainPromise = import("../src/main");
+
+    await Promise.resolve();
+
+    expect(mocks.bootstrapTheming).not.toHaveBeenCalled();
+    expect(mocks.autoInit).not.toHaveBeenCalled();
 
     document.dispatchEvent(new Event("DOMContentLoaded"));
 
-    expect(initializationOrder).toEqual(["theme", "preline"]);
+    await mainPromise;
+
+    expect(mocks.bootstrapTheming).toHaveBeenCalledOnce();
+    expect(mocks.autoInit).toHaveBeenCalledOnce();
+  });
+
+  it("does not initialize the application when data loading fails", async () => {
+    const error = new Error("Failed to load context");
+
+    mocks.bootstrapData.mockRejectedValue(error);
+
+    await import("../src/main");
+
+    await vi.waitFor(() => {
+      expect(console.error).toHaveBeenCalledWith(
+        "Failed to initialize application.",
+        error,
+      );
+    });
+
+    expect(mocks.bootstrapTheming).not.toHaveBeenCalled();
+    expect(mocks.autoInit).not.toHaveBeenCalled();
   });
 });

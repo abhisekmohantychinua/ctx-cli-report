@@ -3,25 +3,23 @@ import { describe, expect, it } from "vitest";
 import { processReport } from "../../src/data/processor";
 import type { RawReportData } from "../../src/data/models/raw";
 
-const GENERATED_AT = new Date();
-const REPORT_VERSION = "v0.1.0SNAPSHOT";
-
 function createRawData(): RawReportData {
   return {
     metadata: {
       project: {
         name: "example-project",
         root: "/projects/example",
-        createdAt: "2026-09-01T09:00:00",
+        createdAt: new Date("2026-09-01T09:00:00"),
+        ctxVersion: "0.1.0",
+        timezone: "Asia/Kolkata",
+        dateTimeTemplate: "dd MMM yyyy hh:mm:ss a z",
       },
-      ctxVersion: "0.1.0",
-      timezone: "Asia/Kolkata",
       dataRange: {
         firstActivity: "2026-09-01T09:00:00",
         lastActivity: "2026-09-03T18:00:00",
       },
-      generatedAt: GENERATED_AT,
-      reportVersion: REPORT_VERSION,
+      generatedAt: new Date(),
+      reportVersion: "v0.1.0SNAPSHOT",
     },
 
     sessions: {
@@ -507,14 +505,7 @@ describe("data/processor", () => {
 
     const result = processReport(raw);
 
-    expect(result.metadata).toEqual({
-      project: raw.metadata.project,
-      ctxVersion: raw.metadata.ctxVersion,
-      timezone: raw.metadata.timezone,
-      dataRange: raw.metadata.dataRange,
-      generatedAt: GENERATED_AT,
-      reportVersion: REPORT_VERSION,
-    });
+    expect(result.metadata).toEqual(raw.metadata);
   });
 
   it("maps overview metrics and current state", () => {

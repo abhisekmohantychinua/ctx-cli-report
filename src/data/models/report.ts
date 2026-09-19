@@ -24,11 +24,11 @@ export interface ReportMetadata {
   project: {
     name: string;
     root: string;
-    createdAt: string;
+    createdAt: Date;
+    ctxVersion: string;
+    timezone: string;
+    dateTimeTemplate: string;
   };
-
-  ctxVersion: string;
-  timezone: string;
 
   dataRange: {
     firstActivity: string;

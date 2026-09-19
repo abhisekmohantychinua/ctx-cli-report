@@ -5,6 +5,7 @@ import { HSStaticMethods } from "preline/non-auto";
 
 import { bootstrapData } from "./data";
 import { bootstrapTheming } from "./theme";
+import { bootstrapBinding } from "./binding";
 
 /**
  * Waits until the document is ready for client-side initialization.
@@ -36,15 +37,13 @@ function onDomReady(): Promise<void> {
  * @returns A promise that resolves after application startup.
  */
 async function bootstrapApplication(): Promise<void> {
-  const [report] = await Promise.all([bootstrapData(), onDomReady()]);
+  const [reportData] = await Promise.all([bootstrapData(), onDomReady()]);
 
-  console.log("Loaded CTX report data...", report);
+  console.log("Loaded CTX report data...", reportData);
 
   bootstrapTheming();
+  bootstrapBinding(reportData);
   HSStaticMethods.autoInit();
-
-  // Rendering is deferred until the report page components are implemented.
-  // TODO: Render report pages using `report`.
 }
 
 bootstrapApplication().catch((error: unknown) => {

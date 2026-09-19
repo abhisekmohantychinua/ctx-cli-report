@@ -2,12 +2,17 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   bootstrapData: vi.fn(),
+  bootstrapBinding: vi.fn(),
   bootstrapTheming: vi.fn(),
   autoInit: vi.fn(),
 }));
 
 vi.mock("../src/data", () => ({
   bootstrapData: mocks.bootstrapData,
+}));
+
+vi.mock("../src/binding", () => ({
+  bootstrapBinding: mocks.bootstrapBinding,
 }));
 
 vi.mock("../src/theme", () => ({
@@ -47,6 +52,8 @@ describe("main", () => {
     });
 
     expect(mocks.bootstrapData).toHaveBeenCalledOnce();
+    expect(mocks.bootstrapBinding).toHaveBeenCalledOnce();
+    expect(mocks.bootstrapBinding).toHaveBeenCalledWith(report);
     expect(mocks.autoInit).toHaveBeenCalledOnce();
   });
 
@@ -80,6 +87,8 @@ describe("main", () => {
         expect(mocks.bootstrapTheming).toHaveBeenCalledOnce();
       });
 
+      expect(mocks.bootstrapBinding).toHaveBeenCalledOnce();
+      expect(mocks.bootstrapBinding).toHaveBeenCalledWith(report);
       expect(mocks.autoInit).toHaveBeenCalledOnce();
     } finally {
       Object.defineProperty(document, "readyState", {
@@ -104,6 +113,34 @@ describe("main", () => {
     });
 
     expect(mocks.bootstrapTheming).not.toHaveBeenCalled();
+    expect(mocks.bootstrapBinding).not.toHaveBeenCalled();
     expect(mocks.autoInit).not.toHaveBeenCalled();
+  });
+
+  it("initializes theming, binding, and Preline in order", async () => {
+    const report = {
+      metadata: {
+        id: "project-1",
+      },
+    };
+
+    const initializationOrder: string[] = [];
+
+    mocks.bootstrapData.mockResolvedValue(report);
+    mocks.bootstrapTheming.mockImplementation(() => {
+      initializationOrder.push("theme");
+    });
+    mocks.bootstrapBinding.mockImplementation(() => {
+      initializationOrder.push("binding");
+    });
+    mocks.autoInit.mockImplementation(() => {
+      initializationOrder.push("preline");
+    });
+
+    await import("../src/main");
+
+    await vi.waitFor(() => {
+      expect(initializationOrder).toEqual(["theme", "binding", "preline"]);
+    });
   });
 });

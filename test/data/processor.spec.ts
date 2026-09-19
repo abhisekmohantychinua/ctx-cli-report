@@ -3,6 +3,9 @@ import { describe, expect, it } from "vitest";
 import { processReport } from "../../src/data/processor";
 import type { RawReportData } from "../../src/data/models/raw";
 
+const GENERATED_AT = new Date();
+const REPORT_VERSION = "v0.1.0SNAPSHOT";
+
 function createRawData(): RawReportData {
   return {
     metadata: {
@@ -17,6 +20,8 @@ function createRawData(): RawReportData {
         firstActivity: "2026-09-01T09:00:00",
         lastActivity: "2026-09-03T18:00:00",
       },
+      generatedAt: GENERATED_AT,
+      reportVersion: REPORT_VERSION,
     },
 
     sessions: {
@@ -500,42 +505,22 @@ describe("data/processor", () => {
   it("maps CTX metadata and applies report metadata options", () => {
     const raw = createRawData();
 
-    const result = processReport(raw, {
-      generatedAt: "2026-09-18T12:00:00.000Z",
-      reportVersion: "2",
-    });
+    const result = processReport(raw);
 
     expect(result.metadata).toEqual({
       project: raw.metadata.project,
       ctxVersion: raw.metadata.ctxVersion,
       timezone: raw.metadata.timezone,
       dataRange: raw.metadata.dataRange,
-      generatedAt: "2026-09-18T12:00:00.000Z",
-      reportVersion: "2",
+      generatedAt: GENERATED_AT,
+      reportVersion: REPORT_VERSION,
     });
-  });
-
-  it("uses default report metadata when no options are provided", () => {
-    const raw = createRawData();
-
-    const before = Date.now();
-    const result = processReport(raw);
-    const after = Date.now();
-
-    expect(result.metadata.reportVersion).toBe("1");
-
-    const generatedAt = Date.parse(result.metadata.generatedAt);
-
-    expect(generatedAt).toBeGreaterThanOrEqual(before);
-    expect(generatedAt).toBeLessThanOrEqual(after);
   });
 
   it("maps overview metrics and current state", () => {
     const raw = createRawData();
 
-    const result = processReport(raw, {
-      generatedAt: "2026-09-18T12:00:00.000Z",
-    });
+    const result = processReport(raw);
 
     expect(result.overview.metrics).toEqual({
       sessions: 2,

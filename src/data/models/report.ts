@@ -35,7 +35,7 @@ export interface ReportMetadata {
     lastActivity: string;
   };
 
-  generatedAt: string;
+  generatedAt: Date;
   reportVersion: string;
 }
 

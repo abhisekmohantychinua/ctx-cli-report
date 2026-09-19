@@ -15,6 +15,8 @@ export interface RawMetadata {
   ctxVersion: string;
   timezone: string;
   dataRange: RawDataRange;
+  generatedAt: Date;
+  reportVersion: string;
 }
 
 /** Identifies the project that produced the report. */

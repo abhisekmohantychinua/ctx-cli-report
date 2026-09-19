@@ -59,7 +59,22 @@ export function processReport(raw: RawReportData): ReportData {
 
 /** Maps source metadata and supplies report-generation metadata. */
 function processMetadata(raw: RawReportData): ReportMetadata {
-  return raw.metadata;
+  return {
+    project: {
+      name: raw.metadata.project.name,
+      root: raw.metadata.project.root,
+      createdAt: new Date(raw.metadata.project.createdAt),
+      ctxVersion: raw.metadata.project.ctxVersion,
+      timezone: raw.metadata.project.timezone,
+      dateTimeTemplate: raw.metadata.project.dateTimeTemplate,
+    },
+    dataRange: {
+      firstActivity: raw.metadata.dataRange.firstActivity,
+      lastActivity: raw.metadata.dataRange.lastActivity,
+    },
+    generatedAt: new Date(raw.metadata.generatedAt),
+    reportVersion: raw.metadata.reportVersion,
+  };
 }
 
 /** Builds overview metrics and identifies the current report state. */

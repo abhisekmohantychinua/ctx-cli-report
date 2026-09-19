@@ -13,7 +13,7 @@ export interface RawReportData {
 export interface RawMetadata {
   project: RawProjectMetadata;
   dataRange: RawDataRange;
-  generatedAt: Date;
+  generatedAt: string;
   reportVersion: string;
 }
 
@@ -21,7 +21,7 @@ export interface RawMetadata {
 export interface RawProjectMetadata {
   name: string;
   root: string;
-  createdAt: Date;
+  createdAt: string;
   ctxVersion: string;
   timezone: string;
   dateTimeTemplate: string;

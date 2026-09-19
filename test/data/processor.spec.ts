@@ -9,7 +9,7 @@ function createRawData(): RawReportData {
       project: {
         name: "example-project",
         root: "/projects/example",
-        createdAt: new Date("2026-09-01T09:00:00"),
+        createdAt: "2026-09-01T09:00:00",
         ctxVersion: "0.1.0",
         timezone: "Asia/Kolkata",
         dateTimeTemplate: "dd MMM yyyy hh:mm:ss a z",
@@ -18,7 +18,7 @@ function createRawData(): RawReportData {
         firstActivity: "2026-09-01T09:00:00",
         lastActivity: "2026-09-03T18:00:00",
       },
-      generatedAt: new Date(),
+      generatedAt: "2026-09-01T09:00:00",
       reportVersion: "v0.1.0SNAPSHOT",
     },
 
@@ -505,7 +505,19 @@ describe("data/processor", () => {
 
     const result = processReport(raw);
 
-    expect(result.metadata).toEqual(raw.metadata);
+    expect(result.metadata).toEqual({
+      project: {
+        name: "example-project",
+        root: "/projects/example",
+        createdAt: new Date("2026-09-01T09:00:00"),
+        ctxVersion: "0.1.0",
+        timezone: "Asia/Kolkata",
+        dateTimeTemplate: "dd MMM yyyy hh:mm:ss a z",
+      },
+      dataRange: raw.metadata.dataRange,
+      generatedAt: new Date(raw.metadata.generatedAt),
+      reportVersion: raw.metadata.reportVersion,
+    });
   });
 
   it("maps overview metrics and current state", () => {

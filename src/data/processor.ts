@@ -36,12 +36,6 @@ import type {
   ReportTaskStatistics,
 } from "./models/report";
 
-/** Optional metadata overrides used when constructing a processed report. */
-export interface ProcessorOptions {
-  generatedAt?: string;
-  reportVersion?: string;
-}
-
 /**
  * Converts CTX's semi-computed report input into the page-oriented report model.
  *
@@ -52,12 +46,9 @@ export interface ProcessorOptions {
  * @param options Optional report metadata overrides.
  * @returns The normalized model consumed by report pages.
  */
-export function processReport(
-  raw: RawReportData,
-  options: ProcessorOptions = {},
-): ReportData {
+export function processReport(raw: RawReportData): ReportData {
   return {
-    metadata: processMetadata(raw, options),
+    metadata: processMetadata(raw),
     overview: processOverview(raw),
     sessions: processSessions(raw),
     tasks: processTasks(raw),
@@ -67,24 +58,22 @@ export function processReport(
 }
 
 /** Maps source metadata and supplies report-generation metadata. */
-function processMetadata(
-  raw: RawReportData,
-  options: ProcessorOptions,
-): ReportMetadata {
+function processMetadata(raw: RawReportData): ReportMetadata {
   return {
     project: {
       name: raw.metadata.project.name,
       root: raw.metadata.project.root,
-      createdAt: raw.metadata.project.createdAt,
+      createdAt: new Date(raw.metadata.project.createdAt),
+      ctxVersion: raw.metadata.project.ctxVersion,
+      timezone: raw.metadata.project.timezone,
+      dateTimeTemplate: raw.metadata.project.dateTimeTemplate,
     },
-    ctxVersion: raw.metadata.ctxVersion,
-    timezone: raw.metadata.timezone,
     dataRange: {
       firstActivity: raw.metadata.dataRange.firstActivity,
       lastActivity: raw.metadata.dataRange.lastActivity,
     },
-    generatedAt: options.generatedAt ?? new Date().toISOString(),
-    reportVersion: options.reportVersion ?? "1",
+    generatedAt: new Date(raw.metadata.generatedAt),
+    reportVersion: raw.metadata.reportVersion,
   };
 }
 

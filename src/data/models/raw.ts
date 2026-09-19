@@ -12,9 +12,9 @@ export interface RawReportData {
 /** Project metadata and the time range covered by the source data. */
 export interface RawMetadata {
   project: RawProjectMetadata;
-  ctxVersion: string;
-  timezone: string;
   dataRange: RawDataRange;
+  generatedAt: string;
+  reportVersion: string;
 }
 
 /** Identifies the project that produced the report. */
@@ -22,6 +22,9 @@ export interface RawProjectMetadata {
   name: string;
   root: string;
   createdAt: string;
+  ctxVersion: string;
+  timezone: string;
+  dateTimeTemplate: string;
 }
 
 /** First and last activity timestamps available in the source data. */

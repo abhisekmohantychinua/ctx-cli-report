@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+import { TZDate } from "@date-fns/tz";
 import { describe, expect, it } from "vitest";
 
 import type { ReportData } from "../../src/data/models/report";
@@ -5,14 +7,17 @@ import { bindKey } from "../../src/binding/key-binder";
 
 describe("binding/key-binder", () => {
   const generatedAt = new Date("2026-09-19T07:30:00.000Z");
+  const dateTimeTemplate = "dd-MMM-yyyy hh:mm a";
+  const timeZone = "Asia/Kolkata";
 
   const reportData = {
     metadata: {
       project: {
         name: "CTX CLI",
+        dateTimeTemplate,
+        timezone: timeZone,
       },
       generatedAt,
-      timezone: "Asia/Kolkata",
     },
   } as ReportData;
 
@@ -24,15 +29,13 @@ describe("binding/key-binder", () => {
     expect(element.textContent).toBe("CTX CLI");
   });
 
-  it("binds the generated date using the report timezone", () => {
+  it("binds the generated date using the report date-time template and timezone", () => {
     const element = document.createElement("span");
 
     bindKey(reportData, "metadata.generatedAt", element);
 
     expect(element.textContent).toBe(
-      generatedAt.toLocaleString("en-US", {
-        timeZone: "Asia/Kolkata",
-      }),
+      format(new TZDate(generatedAt, timeZone), dateTimeTemplate),
     );
   });
 

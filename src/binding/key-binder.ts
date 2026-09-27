@@ -1,4 +1,4 @@
-import type { Data } from "../data/models/data";
+import type { ReportData } from "../data/models/report-data";
 
 /**
  * Binds a report value to a DOM element.
@@ -7,7 +7,11 @@ import type { Data } from "../data/models/data";
  * @param key - Report data key to bind.
  * @param element - Target DOM element.
  */
-export function bindKey(data: Data, key: string, element: HTMLElement): void {
+export function bindKey(
+  data: ReportData,
+  key: string,
+  element: HTMLElement,
+): void {
   element.textContent = getValueOfKey(data, key);
 }
 
@@ -17,7 +21,7 @@ export function bindKey(data: Data, key: string, element: HTMLElement): void {
  * @param key - Report data key to retrieve.
  * @returns The value of the report data key.
  */
-function getValueOfKey(data: Data, key: string): string {
+function getValueOfKey(data: ReportData, key: string): string {
   switch (key) {
     case "metadata.project.name":
       return data.metadata.project.name;

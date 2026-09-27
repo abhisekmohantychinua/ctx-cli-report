@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 import { describe, expect, it } from "vitest";
 
-import type { Data } from "../../src/data/models/data";
+import type { ReportData } from "../../src/data/models/report-data";
 import { bindKey } from "../../src/binding/key-binder";
 
 describe("binding/key-binder", () => {
@@ -21,7 +21,7 @@ describe("binding/key-binder", () => {
       },
       generatedAt,
     },
-  } as Data;
+  } as ReportData;
 
   it("binds the project name", () => {
     const element = document.createElement("span");

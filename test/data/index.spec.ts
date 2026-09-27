@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { ReportData } from "../../src/data/schemas/report-data-schema";
+import type { SourceData } from "../../src/data/models/source-data";
 import { bootstrapData } from "../../src/data";
 import * as loader from "../../src/data/loader";
 import * as processor from "../../src/data/processor";
 
 describe("bootstrapData", () => {
-  const rawData = {} as ReportData;
-  const data = {} as ReturnType<typeof processor.processReportData>;
+  const rawData = {} as SourceData;
+  const data = {} as ReturnType<typeof processor.processSourceData>;
 
   beforeEach(() => {
     vi.restoreAllMocks();
@@ -19,7 +19,7 @@ describe("bootstrapData", () => {
       .mockResolvedValue(rawData);
 
     const processReportData = vi
-      .spyOn(processor, "processReportData")
+      .spyOn(processor, "processSourceData")
       .mockReturnValue(data);
 
     const result = await bootstrapData();
@@ -37,7 +37,7 @@ describe("bootstrapData", () => {
       .spyOn(loader, "loadContext")
       .mockRejectedValue(error);
 
-    const processReportData = vi.spyOn(processor, "processReportData");
+    const processReportData = vi.spyOn(processor, "processSourceData");
 
     await expect(bootstrapData()).rejects.toBe(error);
 
@@ -51,7 +51,7 @@ describe("bootstrapData", () => {
     vi.spyOn(loader, "loadContext").mockResolvedValue(rawData);
 
     const processReportData = vi
-      .spyOn(processor, "processReportData")
+      .spyOn(processor, "processSourceData")
       .mockImplementation(() => {
         throw error;
       });

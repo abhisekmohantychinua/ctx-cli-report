@@ -12,19 +12,19 @@ import type { DateTime, Duration } from "luxon";
  * productivity, quality, causation, or other information that the source
  * contract does not preserve.
  */
-export interface Data {
-  metadata: Data.Metadata;
-  overview: Data.Overview;
-  sessions: Data.Sessions;
-  tasks: Data.Tasks;
-  logs: Data.Logs;
-  decisions: Data.Decisions;
+export interface ReportData {
+  metadata: ReportData.Metadata;
+  overview: ReportData.Overview;
+  sessions: ReportData.Sessions;
+  tasks: ReportData.Tasks;
+  logs: ReportData.Logs;
+  decisions: ReportData.Decisions;
 }
 
 /**
- * Namespace containing all models used by {@link Data}.
+ * Namespace containing all models used by {@link ReportData}.
  */
-export namespace Data {
+export namespace ReportData {
   /**
    * Contains project and report-level metadata.
    */

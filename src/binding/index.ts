@@ -1,4 +1,4 @@
-import type { Data } from "../data/models/data";
+import type { ReportData } from "../data/models/report-data";
 import { bindInitializer } from "./initializer-binder";
 import { bindKey } from "./key-binder";
 
@@ -7,7 +7,7 @@ import { bindKey } from "./key-binder";
  *
  * @param reportData - Processed report data.
  */
-export function bootstrapBinding(reportData: Data): void {
+export function bootstrapBinding(reportData: ReportData): void {
   bindKeys(reportData);
   bindInitializers(reportData);
 }
@@ -17,7 +17,7 @@ export function bootstrapBinding(reportData: Data): void {
  *
  * @param reportData - Processed report data.
  */
-function bindKeys(reportData: Data): void {
+function bindKeys(reportData: ReportData): void {
   const elements = document.querySelectorAll<HTMLElement>("[data-key]");
 
   elements.forEach((element) => {
@@ -36,7 +36,7 @@ function bindKeys(reportData: Data): void {
  *
  * @param reportData - Processed report data.
  */
-function bindInitializers(reportData: Data): void {
+function bindInitializers(reportData: ReportData): void {
   const elements = document.querySelectorAll<HTMLElement>("[data-initializer]");
 
   elements.forEach((element) => {

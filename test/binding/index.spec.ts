@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { Data } from "../../src/data/models/data";
+import type { ReportData } from "../../src/data/models/report-data";
 import { bootstrapBinding } from "../../src/binding";
 import { bindInitializer } from "../../src/binding/initializer-binder";
 import { bindKey } from "../../src/binding/key-binder";
@@ -14,7 +14,7 @@ vi.mock("../../src/binding/initializer-binder", () => ({
 }));
 
 describe("binding", () => {
-  const data = {} as Data;
+  const data = {} as ReportData;
 
   beforeEach(() => {
     document.body.innerHTML = "";

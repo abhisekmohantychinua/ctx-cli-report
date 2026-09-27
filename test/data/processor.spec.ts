@@ -1,8 +1,8 @@
 import { DateTime, Duration } from "luxon";
 import { describe, expect, it } from "vitest";
 
-import { processReportData } from "../../src/data/processor";
-import type { ReportData } from "../../src/data/schemas/report-data-schema";
+import { processSourceData } from "../../src/data/processor";
+import type { SourceData } from "../../src/data/models/source-data";
 
 function instant(value: string): DateTime<true> {
   const dateTime = DateTime.fromISO(value, { setZone: true });
@@ -24,7 +24,7 @@ function duration(value: string): Duration<true> {
   return parsedDuration;
 }
 
-function createReportData(): ReportData {
+function createReportData(): SourceData {
   const task1 = {
     id: "task-1",
     title: "Build loader",
@@ -387,14 +387,14 @@ function createReportData(): ReportData {
 describe("data/processor", () => {
   it("maps metadata", () => {
     const source = createReportData();
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.metadata).toEqual(source.metadata);
   });
 
   it("maps overview metrics", () => {
     const source = createReportData();
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.overview.metrics.sessions).toBe(2);
     expect(result.overview.metrics.recordedDuration.toMillis()).toBe(
@@ -414,7 +414,7 @@ describe("data/processor", () => {
 
   it("identifies the active session and task in progress", () => {
     const source = createReportData();
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.overview.currentState.activeSession).toBe(
       source.sessions.records[1],
@@ -427,7 +427,7 @@ describe("data/processor", () => {
 
   it("maps the remaining current state", () => {
     const source = createReportData();
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.overview.currentState.pendingTaskCount).toBe(1);
     expect(result.overview.currentState.blockedTaskCount).toBe(1);
@@ -441,7 +441,7 @@ describe("data/processor", () => {
 
   it("builds recent activity in reverse chronological order", () => {
     const source = createReportData();
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.overview.recentActivity).toHaveLength(13);
 
@@ -536,7 +536,7 @@ describe("data/processor", () => {
 
   it("builds the timeline from recent activity", () => {
     const source = createReportData();
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.overview.timeline).toEqual(
       result.overview.recentActivity.map((activity) => ({
@@ -550,7 +550,7 @@ describe("data/processor", () => {
 
   it("maps sessions and derives session evaluations", () => {
     const source = createReportData();
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.sessions.records).toBe(source.sessions.records);
     expect(result.sessions.statistics).toEqual(source.sessions.statistics);
@@ -581,7 +581,7 @@ describe("data/processor", () => {
 
     source.sessions.records = [source.sessions.records[0]];
 
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.sessions.evaluations.workContinuityRatio).toBeNull();
   });
@@ -602,14 +602,14 @@ describe("data/processor", () => {
       },
     ];
 
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.sessions.evaluations.workContinuityRatio).toBeNull();
   });
 
   it("maps tasks and resolves the task hierarchy", () => {
     const source = createReportData();
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.tasks.records).toBe(source.tasks.records);
     expect(result.tasks.statistics).toEqual(source.tasks.statistics);
@@ -641,7 +641,7 @@ describe("data/processor", () => {
 
   it("maps logs and their task analysis", () => {
     const source = createReportData();
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.logs.records).toBe(source.logs.records);
     expect(result.logs.statistics).toEqual(source.logs.statistics);
@@ -651,7 +651,7 @@ describe("data/processor", () => {
 
   it("maps decisions and their references", () => {
     const source = createReportData();
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.decisions.records).toBe(source.decisions.records);
     expect(result.decisions.statistics).toEqual(source.decisions.statistics);
@@ -673,7 +673,7 @@ describe("data/processor", () => {
       source.decisions.records[1],
     ];
 
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.overview.currentState.latestLog).toBe(source.logs.records[0]);
 
@@ -691,7 +691,7 @@ describe("data/processor", () => {
       endTime: session.endTime ?? instant("2026-09-03T18:00:00+05:30"),
     }));
 
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.overview.currentState.activeSession).toBeNull();
     expect(result.overview.currentState.activeTask).toBe(
@@ -707,7 +707,7 @@ describe("data/processor", () => {
       status: task.status === "in-progress" ? "pending" : task.status,
     }));
 
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.overview.currentState.activeTask).toBeNull();
   });
@@ -725,7 +725,7 @@ describe("data/processor", () => {
       openCount: 0,
     };
 
-    const result = processReportData(source);
+    const result = processSourceData(source);
 
     expect(result.overview.metrics.taskCompletionRate).toBeNull();
     expect(result.overview.metrics.taskOpenRate).toBeNull();
@@ -735,7 +735,7 @@ describe("data/processor", () => {
     const source = createReportData();
     const before = JSON.stringify(source);
 
-    processReportData(source);
+    processSourceData(source);
 
     expect(JSON.stringify(source)).toBe(before);
   });

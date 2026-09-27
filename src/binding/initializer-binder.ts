@@ -1,6 +1,6 @@
-import type { Data } from "../data/models/data";
+import type { ReportData } from "../data/models/report-data";
 
-type Initializer = (data: Data, element: HTMLElement) => void;
+type Initializer = (data: ReportData, element: HTMLElement) => void;
 
 /**
  * Binds a report initializer to a DOM element.
@@ -10,7 +10,7 @@ type Initializer = (data: Data, element: HTMLElement) => void;
  * @param element - Target DOM element.
  */
 export function bindInitializer(
-  data: Data,
+  data: ReportData,
   key: string,
   element: HTMLElement,
 ): void {

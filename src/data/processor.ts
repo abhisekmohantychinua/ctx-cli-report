@@ -1,6 +1,6 @@
-import type { ReportData as SourceData } from "./schemas/report-data-schema";
+import type { SourceData } from "./models/source-data";
 
-import type { Data } from "./models/data";
+import type { ReportData } from "./models/report-data";
 import { DateTime, Duration } from "luxon";
 
 /**
@@ -16,7 +16,7 @@ import { DateTime, Duration } from "luxon";
  * @param source - The validated CTX report payload to transform.
  * @returns A presentation-oriented report model ready for the UI bindings.
  */
-export function processReportData(source: SourceData): Data {
+export function processSourceData(source: SourceData): ReportData {
   return {
     metadata: processMetadata(source),
     overview: processOverview(source),
@@ -33,7 +33,7 @@ export function processReportData(source: SourceData): Data {
  * @param source - The source CTX report data.
  * @returns The sanitized metadata block used by the report pages.
  */
-function processMetadata(source: SourceData): Data.Metadata {
+function processMetadata(source: SourceData): ReportData.Metadata {
   return {
     project: {
       name: source.metadata.project.name,
@@ -54,7 +54,7 @@ function processMetadata(source: SourceData): Data.Metadata {
  * @param source - The source CTX report data.
  * @returns A compact summary model for the main dashboard and landing page.
  */
-function processOverview(source: SourceData): Data.Overview {
+function processOverview(source: SourceData): ReportData.Overview {
   const taskStatistics = source.tasks.statistics;
 
   return {
@@ -96,7 +96,7 @@ function processOverview(source: SourceData): Data.Overview {
  * @param source - The source CTX report data.
  * @returns The processed session model with derived metrics and distribution data.
  */
-function processSessions(source: SourceData): Data.Sessions {
+function processSessions(source: SourceData): ReportData.Sessions {
   const statistics = source.sessions.statistics;
   const activeDays = calculateActiveDays(source);
 
@@ -161,7 +161,7 @@ function processSessions(source: SourceData): Data.Sessions {
  * @param source - The source CTX report data.
  * @returns The processed task model with status summaries and hierarchy data.
  */
-function processTasks(source: SourceData): Data.Tasks {
+function processTasks(source: SourceData): ReportData.Tasks {
   const statistics = source.tasks.statistics;
 
   return {
@@ -203,8 +203,8 @@ function processTasks(source: SourceData): Data.Tasks {
  * @returns The transformed tree node for UI rendering.
  */
 function processTaskTreeNode(
-  node: SourceData["tasks"]["tree"][number],
-): Data.Tasks.TreeNode {
+  node: SourceData.Tasks.TreeNode,
+): ReportData.Tasks.TreeNode {
   return {
     task: node.task,
     children: node.children.map(processTaskTreeNode),
@@ -217,7 +217,7 @@ function processTaskTreeNode(
  * @param source - The source CTX report data.
  * @returns The processed log model with statistics and task linkage information.
  */
-function processLogs(source: SourceData): Data.Logs {
+function processLogs(source: SourceData): ReportData.Logs {
   const statistics = source.logs.statistics;
 
   return {
@@ -276,7 +276,7 @@ function processLogs(source: SourceData): Data.Logs {
  * @param source - The source CTX report data.
  * @returns The processed decision model with topic summaries and references.
  */
-function processDecisions(source: SourceData): Data.Decisions {
+function processDecisions(source: SourceData): ReportData.Decisions {
   const statistics = source.decisions.statistics;
 
   return {
@@ -324,8 +324,8 @@ function processDecisions(source: SourceData): Data.Decisions {
  * @returns The active session, or null when none is currently active.
  */
 function findActiveSession(
-  sessions: SourceData["sessions"]["records"],
-): Data.Sessions.Record | null {
+  sessions: SourceData.Sessions.Record[],
+): ReportData.Sessions.Record | null {
   return sessions.find((session) => session.status === "active") ?? null;
 }
 
@@ -378,8 +378,10 @@ function latestByTimestamp<T extends { timestamp: DateTime }>(
  * @param source - The source CTX report data.
  * @returns The most recent project activities in reverse-chronological order.
  */
-function buildRecentActivity(source: SourceData): Data.Overview.Activity[] {
-  const activities: Data.Overview.Activity[] = [];
+function buildRecentActivity(
+  source: SourceData,
+): ReportData.Overview.Activity[] {
+  const activities: ReportData.Overview.Activity[] = [];
 
   for (const session of source.sessions.records) {
     activities.push({
@@ -440,7 +442,9 @@ function buildRecentActivity(source: SourceData): Data.Overview.Activity[] {
  * @param source - The source CTX report data.
  * @returns A timeline representation of the latest project activity records.
  */
-function buildTimeline(source: SourceData): Data.Overview.TimelineEvent[] {
+function buildTimeline(
+  source: SourceData,
+): ReportData.Overview.TimelineEvent[] {
   return buildRecentActivity(source).map((activity) => ({
     timestamp: activity.timestamp,
     type: activity.type,
@@ -464,7 +468,7 @@ function buildTimeline(source: SourceData): Data.Overview.TimelineEvent[] {
  * @returns The continuity ratio, or null when it cannot be computed.
  */
 function calculateWorkContinuity(
-  sessions: SourceData["sessions"]["records"],
+  sessions: SourceData.Sessions.Record[],
   totalDuration: Duration,
 ): number | null {
   if (sessions.length < 2) {
@@ -504,7 +508,7 @@ function calculateWorkContinuity(
  * @returns The average sessions per calendar day, or null when no valid denominator exists.
  */
 function calculateAverageSessionsPerCalendarDay(
-  sessions: SourceData["sessions"]["records"],
+  sessions: SourceData.Sessions.Record[],
   count: number,
 ): number | null {
   if (sessions.length === 0 || count === 0) {
@@ -526,7 +530,7 @@ function calculateAverageSessionsPerCalendarDay(
  * @returns The average duration per covered day, or null when no sessions exist.
  */
 function calculateAverageRecordedTimePerCalendarDay(
-  sessions: SourceData["sessions"]["records"],
+  sessions: SourceData.Sessions.Record[],
   totalDuration: Duration,
 ): Duration | null {
   if (sessions.length === 0) {
@@ -596,7 +600,7 @@ function durationRatio(duration: Duration, divisor: number): Duration | null {
  * @returns The in-progress task, or null when no task is in progress.
  */
 function findTaskInProgress(
-  tasks: SourceData["tasks"]["records"],
-): Data.Tasks.Record | null {
+  tasks: SourceData.Tasks.Record[],
+): ReportData.Tasks.Record | null {
   return tasks.find((task) => task.status === "in-progress") ?? null;
 }

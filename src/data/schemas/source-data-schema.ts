@@ -196,10 +196,12 @@ const TaskStatusDistributionSchema = z
 /**
  * Represents one node in the resolved task hierarchy.
  */
-const TaskTreeNodeSchema: z.ZodType<{
+type TaskTreeNode = {
   task: z.infer<typeof TaskRecordSchema>;
   children: TaskTreeNode[];
-}> = z.lazy(() =>
+};
+
+const TaskTreeNodeSchema: z.ZodType<TaskTreeNode> = z.lazy(() =>
   z
     .object({
       task: TaskRecordSchema,
@@ -408,7 +410,7 @@ const DecisionsSchema = z
  * generator and transforms Java {@code Instant} and {@code Duration}
  * representations into Luxon runtime objects.
  */
-export const ReportDataSchema = z
+export const SourceDataSchema = z
   .object({
     metadata: MetadataSchema,
     sessions: SessionsSchema,
@@ -417,56 +419,3 @@ export const ReportDataSchema = z
     decisions: DecisionsSchema,
   })
   .strict();
-
-/**
- * TypeScript representation of the parsed CTX CLI report.
- *
- * <p>All temporal values are represented by Luxon runtime types:
- *
- * <ul>
- *   <li>Java {@code Instant} → {@link DateTime}</li>
- *   <li>Java {@code Duration} → {@link Duration}</li>
- * </ul>
- *
- * <p>The types are inferred directly from the Zod schemas, ensuring that the
- * compile-time representation corresponds to the runtime parsing behavior.
- */
-export type ReportData = z.infer<typeof ReportDataSchema>;
-
-export type Metadata = z.infer<typeof MetadataSchema>;
-export type MetadataProject = z.infer<typeof MetadataProjectSchema>;
-
-export type Sessions = z.infer<typeof SessionsSchema>;
-export type Session = z.infer<typeof SessionRecordSchema>;
-export type SessionStatistics = z.infer<typeof SessionStatisticsSchema>;
-export type DurationDistribution = z.infer<typeof DurationDistributionSchema>;
-export type SessionGaps = z.infer<typeof SessionGapsSchema>;
-
-export type Tasks = z.infer<typeof TasksSchema>;
-export type Task = z.infer<typeof TaskRecordSchema>;
-export type TaskStatistics = z.infer<typeof TaskStatisticsSchema>;
-export type TaskStatusDistribution = z.infer<
-  typeof TaskStatusDistributionSchema
->;
-export type TaskTreeNode = z.infer<typeof TaskTreeNodeSchema>;
-export type BlockedTask = z.infer<typeof BlockedTaskSchema>;
-
-export type Logs = z.infer<typeof LogsSchema>;
-export type Log = z.infer<typeof LogRecordSchema>;
-export type LogStatistics = z.infer<typeof LogStatisticsSchema>;
-export type LogTypeStatistics = z.infer<typeof LogTypeStatisticsSchema>;
-export type LogTaskAnalysis = z.infer<typeof LogTaskAnalysisSchema>;
-export type TaskLogCount = z.infer<typeof TaskLogCountSchema>;
-export type RepeatedAttempt = z.infer<typeof RepeatedAttemptSchema>;
-
-export type Decisions = z.infer<typeof DecisionsSchema>;
-export type Decision = z.infer<typeof DecisionRecordSchema>;
-export type DecisionStatistics = z.infer<typeof DecisionStatisticsSchema>;
-export type DecisionTopicCount = z.infer<typeof DecisionTopicCountSchema>;
-export type DecisionTagCount = z.infer<typeof DecisionTagCountSchema>;
-export type DecisionReferences = z.infer<typeof DecisionReferencesSchema>;
-export type DecisionReferenceCounts = z.infer<
-  typeof DecisionReferenceCountsSchema
->;
-
-export type Reference = z.infer<typeof ReferenceSchema>;

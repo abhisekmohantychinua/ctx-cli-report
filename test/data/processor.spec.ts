@@ -1,24 +1,89 @@
+import { DateTime, Duration } from "luxon";
 import { describe, expect, it } from "vitest";
 
-import { processReport } from "../../src/data/processor";
-import type { RawReportData } from "../../src/data/models/raw";
+import { processReportData } from "../../src/data/processor";
+import type { ReportData } from "../../src/data/schemas/report-data-schema";
 
-function createRawData(): RawReportData {
+function instant(value: string): DateTime<true> {
+  const dateTime = DateTime.fromISO(value, { setZone: true });
+
+  if (!dateTime.isValid) {
+    throw new Error(`Invalid test instant: ${value}`);
+  }
+
+  return dateTime.toUTC();
+}
+
+function duration(value: string): Duration<true> {
+  const parsedDuration = Duration.fromISO(value);
+
+  if (!parsedDuration.isValid) {
+    throw new Error(`Invalid test duration: ${value}`);
+  }
+
+  return parsedDuration;
+}
+
+function createReportData(): ReportData {
+  const task1 = {
+    id: "task-1",
+    title: "Build loader",
+    description: "Implement the context loader",
+    status: "completed",
+    createdAt: instant("2026-09-01T09:00:00+05:30"),
+    completedAt: instant("2026-09-01T12:00:00+05:30"),
+    completionDuration: duration("PT3H"),
+    blockReason: null,
+    subtaskCount: 1,
+  };
+
+  const task2 = {
+    id: "task-2",
+    title: "Build processor",
+    description: null,
+    status: "in-progress",
+    createdAt: instant("2026-09-03T14:00:00+05:30"),
+    completedAt: null,
+    completionDuration: null,
+    blockReason: null,
+    subtaskCount: 1,
+  };
+
+  const task3 = {
+    id: "task-3",
+    title: "Write documentation",
+    description: null,
+    status: "pending",
+    createdAt: instant("2026-09-03T16:00:00+05:30"),
+    completedAt: null,
+    completionDuration: null,
+    blockReason: null,
+    subtaskCount: 0,
+  };
+
+  const task4 = {
+    id: "task-4",
+    title: "Fix integration",
+    description: null,
+    status: "blocked",
+    createdAt: instant("2026-09-03T17:00:00+05:30"),
+    completedAt: null,
+    completionDuration: null,
+    blockReason: "Waiting for API changes",
+    subtaskCount: 0,
+  };
+
   return {
     metadata: {
       project: {
         name: "example-project",
         root: "/projects/example",
-        createdAt: "2026-09-01T09:00:00",
-        ctxVersion: "0.1.0",
+        createdAt: instant("2026-09-01T09:00:00+05:30"),
+        version: "0.1.0",
         timezone: "Asia/Kolkata",
         dateTimeTemplate: "dd MMM yyyy hh:mm:ss a z",
       },
-      dataRange: {
-        firstActivity: "2026-09-01T09:00:00",
-        lastActivity: "2026-09-03T18:00:00",
-      },
-      generatedAt: "2026-09-01T09:00:00",
+      generatedAt: instant("2026-09-03T18:00:00+05:30"),
       reportVersion: "v0.1.0SNAPSHOT",
     },
 
@@ -26,35 +91,33 @@ function createRawData(): RawReportData {
       records: [
         {
           id: "session-1",
-          startTime: "2026-09-01T09:00:00",
-          endTime: "2026-09-01T12:00:00",
-          duration: 10800,
+          startTime: instant("2026-09-01T09:00:00+05:30"),
+          endTime: instant("2026-09-01T12:00:00+05:30"),
+          duration: duration("PT3H"),
           note: "Initial implementation",
-          environment: "local",
           status: "completed",
-          taskIds: ["task-1"],
         },
         {
           id: "session-2",
-          startTime: "2026-09-03T14:00:00",
+          startTime: instant("2026-09-03T14:00:00+05:30"),
           endTime: null,
-          duration: null,
+          duration: duration("PT0S"),
           note: "Current work",
-          environment: "local",
           status: "active",
-          taskIds: ["task-2"],
         },
       ],
+
       statistics: {
         count: 2,
         completedCount: 1,
         activeCount: 1,
-        totalDuration: 10800,
-        averageDuration: 10800,
-        medianDuration: 10800,
-        longestDuration: 10800,
-        shortestDuration: 10800,
+        totalDuration: duration("PT3H"),
+        averageDuration: duration("PT3H"),
+        medianDuration: duration("PT3H"),
+        longestDuration: duration("PT3H"),
+        shortestDuration: duration("PT3H"),
       },
+
       durationDistribution: [
         {
           label: "0-1h",
@@ -65,61 +128,13 @@ function createRawData(): RawReportData {
           count: 2,
         },
       ],
-      activity: {
-        firstStart: "2026-09-01T09:00:00",
-        latestEnd: "2026-09-01T12:00:00",
-        calendarDays: 3,
-        activeDays: 2,
-        inactiveDays: 1,
-        dailyCounts: [
-          {
-            date: "2026-09-01",
-            count: 1,
-          },
-          {
-            date: "2026-09-03",
-            count: 1,
-          },
-        ],
-        dailyDurations: [
-          {
-            date: "2026-09-01",
-            duration: 10800,
-          },
-          {
-            date: "2026-09-03",
-            duration: 0,
-          },
-        ],
-        startByHour: [
-          {
-            hour: 9,
-            count: 1,
-          },
-          {
-            hour: 14,
-            count: 1,
-          },
-        ],
-        startByDayOfWeek: [
-          {
-            day: "Monday",
-            count: 1,
-          },
-          {
-            day: "Wednesday",
-            count: 1,
-          },
-        ],
-        averageStartTime: "11:30",
-        peakStartHour: 9,
-      },
+
       gaps: {
-        values: [187200],
-        average: 187200,
-        median: 187200,
-        longest: 187200,
-        shortest: 187200,
+        values: [duration("PT50H")],
+        average: duration("PT50H"),
+        median: duration("PT50H"),
+        longest: duration("PT50H"),
+        shortest: duration("PT50H"),
         distribution: [
           {
             label: "24h+",
@@ -130,72 +145,8 @@ function createRawData(): RawReportData {
     },
 
     tasks: {
-      records: [
-        {
-          id: "task-1",
-          title: "Build loader",
-          description: "Implement the context loader",
-          status: "completed",
-          parentId: null,
-          createdAt: "2026-09-01T09:00:00",
-          completedAt: "2026-09-01T12:00:00",
-          completionDuration: 10800,
-          blockReason: null,
-          sessionId: "session-1",
-          subtaskCount: 1,
-          logCount: 2,
-          decisionCount: 1,
-          lastActivity: "2026-09-01T12:00:00",
-        },
-        {
-          id: "task-2",
-          title: "Build processor",
-          description: null,
-          status: "in-progress",
-          parentId: null,
-          createdAt: "2026-09-03T14:00:00",
-          completedAt: null,
-          completionDuration: null,
-          blockReason: null,
-          sessionId: "session-2",
-          subtaskCount: 0,
-          logCount: 1,
-          decisionCount: 0,
-          lastActivity: "2026-09-03T16:00:00",
-        },
-        {
-          id: "task-3",
-          title: "Write documentation",
-          description: null,
-          status: "pending",
-          parentId: "task-2",
-          createdAt: "2026-09-03T16:00:00",
-          completedAt: null,
-          completionDuration: null,
-          blockReason: null,
-          sessionId: null,
-          subtaskCount: 0,
-          logCount: 0,
-          decisionCount: 0,
-          lastActivity: "2026-09-03T16:00:00",
-        },
-        {
-          id: "task-4",
-          title: "Fix integration",
-          description: null,
-          status: "blocked",
-          parentId: null,
-          createdAt: "2026-09-03T17:00:00",
-          completedAt: null,
-          completionDuration: null,
-          blockReason: "Waiting for API changes",
-          sessionId: null,
-          subtaskCount: 0,
-          logCount: 0,
-          decisionCount: 0,
-          lastActivity: "2026-09-03T17:00:00",
-        },
-      ],
+      records: [task1, task2, task3, task4],
+
       statistics: {
         count: 4,
         completedCount: 1,
@@ -206,11 +157,12 @@ function createRawData(): RawReportData {
         rootCount: 3,
         subtaskCount: 1,
         maxDepth: 1,
-        averageCompletionDuration: 10800,
-        medianCompletionDuration: 10800,
-        longestCompletionDuration: 10800,
-        shortestCompletionDuration: 10800,
+        averageCompletionDuration: duration("PT3H"),
+        medianCompletionDuration: duration("PT3H"),
+        longestCompletionDuration: duration("PT3H"),
+        shortestCompletionDuration: duration("PT3H"),
       },
+
       statusDistribution: [
         {
           status: "completed",
@@ -229,34 +181,27 @@ function createRawData(): RawReportData {
           count: 1,
         },
       ],
-      activity: {
-        createdByDay: [
-          {
-            date: "2026-09-01",
-            count: 1,
-          },
-          {
-            date: "2026-09-03",
-            count: 3,
-          },
-        ],
-        completedByDay: [
-          {
-            date: "2026-09-01",
-            count: 1,
-          },
-        ],
-      },
-      hierarchy: {
-        tree: [
-          {
-            taskId: "task-2",
-            children: ["task-3"],
-          },
-        ],
-        orphans: ["task-4"],
-        cycles: [],
-      },
+
+      tree: [
+        {
+          task: task1,
+          children: [],
+        },
+        {
+          task: task2,
+          children: [
+            {
+              task: task3,
+              children: [],
+            },
+          ],
+        },
+        {
+          task: task4,
+          children: [],
+        },
+      ],
+
       blocked: [
         {
           taskId: "task-4",
@@ -269,72 +214,57 @@ function createRawData(): RawReportData {
       records: [
         {
           id: "log-1",
-          timestamp: "2026-09-01T10:00:00",
-          message: "Started implementation",
+          timestamp: instant("2026-09-01T10:00:00+05:30"),
+          note: "Started implementation",
           type: "note",
-          sessionId: "session-1",
-          taskId: "task-1",
+          reference: {
+            type: "task",
+            id: "task-1",
+          },
         },
         {
           id: "log-2",
-          timestamp: "2026-09-01T11:00:00",
-          message: "Encountered an issue",
+          timestamp: instant("2026-09-01T11:00:00+05:30"),
+          note: "Encountered an issue",
           type: "issue",
-          sessionId: "session-1",
-          taskId: "task-1",
+          reference: {
+            type: "task",
+            id: "task-1",
+          },
         },
         {
           id: "log-3",
-          timestamp: "2026-09-03T15:00:00",
-          message: "Trying another approach",
+          timestamp: instant("2026-09-03T15:00:00+05:30"),
+          note: "Trying another approach",
           type: "attempt",
-          sessionId: "session-2",
-          taskId: "task-2",
+          reference: {
+            type: "task",
+            id: "task-2",
+          },
         },
       ],
+
       statistics: {
         count: 3,
         unlinkedCount: 0,
-        firstTimestamp: "2026-09-01T10:00:00",
-        latestTimestamp: "2026-09-03T15:00:00",
+        firstTimestamp: instant("2026-09-01T10:00:00+05:30"),
+        latestTimestamp: instant("2026-09-03T15:00:00+05:30"),
+
         byType: {
           note: 1,
+          idea: 0,
           issue: 1,
           attempt: 1,
         },
+
         issuesCount: 1,
         attemptsCount: 1,
         logsPerSession: 1.5,
-        logsPerTask: 1,
+        logsPerTask: 1.5,
         tasksWithLogs: 2,
         tasksWithoutLogs: 2,
       },
-      activity: {
-        byDay: [
-          {
-            date: "2026-09-01",
-            count: 2,
-          },
-          {
-            date: "2026-09-03",
-            count: 1,
-          },
-        ],
-        byHour: [
-          {
-            hour: 10,
-            count: 1,
-          },
-          {
-            hour: 11,
-            count: 1,
-          },
-          {
-            hour: 15,
-            count: 1,
-          },
-        ],
-      },
+
       taskAnalysis: {
         mostLoggedTasks: [
           {
@@ -346,19 +276,23 @@ function createRawData(): RawReportData {
             count: 1,
           },
         ],
+
         tasksWithoutLogs: ["task-3", "task-4"],
+
         issuesByTask: [
           {
             taskId: "task-1",
             count: 1,
           },
         ],
+
         attemptsByTask: [
           {
             taskId: "task-2",
             count: 1,
           },
         ],
+
         repeatedAttempts: [
           {
             taskId: "task-2",
@@ -366,12 +300,6 @@ function createRawData(): RawReportData {
           },
         ],
       },
-      invalidReferences: [
-        {
-          type: "task",
-          id: "missing-task",
-        },
-      ],
     },
 
     decisions: {
@@ -381,7 +309,7 @@ function createRawData(): RawReportData {
           topic: "architecture",
           reasoning: "Keep the report processor lightweight.",
           tags: ["architecture", "processor"],
-          timestamp: "2026-09-01T11:30:00",
+          timestamp: instant("2026-09-01T11:30:00+05:30"),
           reference: {
             type: "task",
             id: "task-1",
@@ -392,7 +320,7 @@ function createRawData(): RawReportData {
           topic: "architecture",
           reasoning: "Use a page-oriented report model.",
           tags: ["architecture"],
-          timestamp: "2026-09-03T15:30:00",
+          timestamp: instant("2026-09-03T15:30:00+05:30"),
           reference: {
             type: "task",
             id: "task-2",
@@ -403,15 +331,17 @@ function createRawData(): RawReportData {
           topic: "testing",
           reasoning: "Test the public processor contract.",
           tags: ["testing"],
-          timestamp: "2026-09-03T16:00:00",
+          timestamp: instant("2026-09-03T16:00:00+05:30"),
           reference: null,
         },
       ],
+
       statistics: {
         count: 3,
         unlinkedCount: 1,
-        firstTimestamp: "2026-09-01T11:30:00",
-        latestTimestamp: "2026-09-03T16:00:00",
+        firstTimestamp: instant("2026-09-01T11:30:00+05:30"),
+        latestTimestamp: instant("2026-09-03T16:00:00+05:30"),
+
         byTopic: [
           {
             topic: "architecture",
@@ -422,8 +352,10 @@ function createRawData(): RawReportData {
             count: 1,
           },
         ],
+
         repeatedTopics: ["architecture"],
         uncategorizedCount: 0,
+
         byTag: [
           {
             tag: "architecture",
@@ -439,372 +371,352 @@ function createRawData(): RawReportData {
           },
         ],
       },
+
       references: {
         byType: {
           task: 2,
+          session: 0,
         },
         tasksWithDecisions: ["task-1", "task-2"],
         sessionsWithDecisions: [],
-        invalid: [],
       },
-      activity: {
-        byDay: [
-          {
-            date: "2026-09-01",
-            count: 1,
-          },
-          {
-            date: "2026-09-03",
-            count: 2,
-          },
-        ],
-      },
-    },
-
-    activity: {
-      recent: [
-        {
-          timestamp: "2026-09-03T16:00:00",
-          type: "decision",
-          id: "decision-3",
-          taskId: null,
-          sessionId: null,
-          message: "Test the public processor contract.",
-        },
-      ],
-      timeline: [
-        {
-          timestamp: "2026-09-01T09:00:00",
-          type: "session",
-          id: "session-1",
-        },
-        {
-          timestamp: "2026-09-03T16:00:00",
-          type: "decision",
-          id: "decision-3",
-        },
-      ],
-    },
-
-    integrity: {
-      valid: true,
-      invalidTimestamps: [],
-      invalidReferences: [],
-      invalidParentReferences: [],
-      orphanTasks: ["task-4"],
-      cyclicTasks: [],
-      missingRequiredFields: [],
-      limitations: [],
     },
   };
 }
 
 describe("data/processor", () => {
-  it("maps CTX metadata and applies report metadata options", () => {
-    const raw = createRawData();
+  it("maps metadata", () => {
+    const source = createReportData();
+    const result = processReportData(source);
 
-    const result = processReport(raw);
-
-    expect(result.metadata).toEqual({
-      project: {
-        name: "example-project",
-        root: "/projects/example",
-        createdAt: new Date("2026-09-01T09:00:00"),
-        ctxVersion: "0.1.0",
-        timezone: "Asia/Kolkata",
-        dateTimeTemplate: "dd MMM yyyy hh:mm:ss a z",
-      },
-      dataRange: raw.metadata.dataRange,
-      generatedAt: new Date(raw.metadata.generatedAt),
-      reportVersion: raw.metadata.reportVersion,
-    });
+    expect(result.metadata).toEqual(source.metadata);
   });
 
-  it("maps overview metrics and current state", () => {
-    const raw = createRawData();
+  it("maps overview metrics", () => {
+    const source = createReportData();
+    const result = processReportData(source);
 
-    const result = processReport(raw);
+    expect(result.overview.metrics.sessions).toBe(2);
+    expect(result.overview.metrics.recordedDuration.toMillis()).toBe(
+      3 * 60 * 60 * 1000,
+    );
+    expect(result.overview.metrics.activeDays).toBe(2);
+    expect(result.overview.metrics.tasks).toBe(4);
+    expect(result.overview.metrics.completedTasks).toBe(1);
+    expect(result.overview.metrics.inProgressTasks).toBe(1);
+    expect(result.overview.metrics.blockedTasks).toBe(1);
+    expect(result.overview.metrics.pendingTasks).toBe(1);
+    expect(result.overview.metrics.logs).toBe(3);
+    expect(result.overview.metrics.decisions).toBe(3);
+    expect(result.overview.metrics.taskCompletionRate).toBe(25);
+    expect(result.overview.metrics.taskOpenRate).toBe(75);
+  });
 
-    expect(result.overview.metrics).toEqual({
-      sessions: 2,
-      recordedDuration: 10800,
-      activeDays: 2,
+  it("identifies the active session and task in progress", () => {
+    const source = createReportData();
+    const result = processReportData(source);
 
-      tasks: 4,
-      completedTasks: 1,
-      inProgressTasks: 1,
-      blockedTasks: 1,
-      pendingTasks: 1,
-
-      logs: 3,
-      decisions: 3,
-
-      taskCompletionRate: 25,
-      taskOpenRate: 75,
-    });
-
-    expect(result.overview.currentState.activeSession).toEqual(
-      raw.sessions.records[1],
+    expect(result.overview.currentState.activeSession).toBe(
+      source.sessions.records[1],
     );
 
-    expect(result.overview.currentState.activeTask).toEqual(
-      raw.tasks.records[1],
+    expect(result.overview.currentState.activeTask).toBe(
+      source.tasks.records[1],
     );
+  });
+
+  it("maps the remaining current state", () => {
+    const source = createReportData();
+    const result = processReportData(source);
 
     expect(result.overview.currentState.pendingTaskCount).toBe(1);
     expect(result.overview.currentState.blockedTaskCount).toBe(1);
 
-    expect(result.overview.currentState.latestLog).toEqual(raw.logs.records[2]);
+    expect(result.overview.currentState.latestLog).toBe(source.logs.records[2]);
 
-    expect(result.overview.currentState.latestDecision).toEqual(
-      raw.decisions.records[2],
+    expect(result.overview.currentState.latestDecision).toBe(
+      source.decisions.records[2],
     );
   });
 
-  it("maps overview activity without changing the source records", () => {
-    const raw = createRawData();
+  it("builds recent activity in reverse chronological order", () => {
+    const source = createReportData();
+    const result = processReportData(source);
 
-    const result = processReport(raw);
+    expect(result.overview.recentActivity).toHaveLength(13);
 
-    expect(result.overview.recentActivity).toEqual(raw.activity.recent);
-    expect(result.overview.timeline).toEqual(raw.activity.timeline);
+    expect(
+      result.overview.recentActivity.map((activity) => ({
+        type: activity.type,
+        id: activity.id,
+        description: activity.description,
+        timestamp: activity.timestamp.toISO(),
+      })),
+    ).toEqual([
+      {
+        type: "task",
+        id: "task-4",
+        description: "Task created: Fix integration",
+        timestamp: "2026-09-03T11:30:00.000Z",
+      },
+      {
+        type: "task",
+        id: "task-3",
+        description: "Task created: Write documentation",
+        timestamp: "2026-09-03T10:30:00.000Z",
+      },
+      {
+        type: "decision",
+        id: "decision-3",
+        description: "testing",
+        timestamp: "2026-09-03T10:30:00.000Z",
+      },
+      {
+        type: "decision",
+        id: "decision-2",
+        description: "architecture",
+        timestamp: "2026-09-03T10:00:00.000Z",
+      },
+      {
+        type: "log",
+        id: "log-3",
+        description: "Trying another approach",
+        timestamp: "2026-09-03T09:30:00.000Z",
+      },
+      {
+        type: "session",
+        id: "session-2",
+        description: "Session started",
+        timestamp: "2026-09-03T08:30:00.000Z",
+      },
+      {
+        type: "task",
+        id: "task-2",
+        description: "Task created: Build processor",
+        timestamp: "2026-09-03T08:30:00.000Z",
+      },
+      {
+        type: "task",
+        id: "task-1",
+        description: "Task completed: Build loader",
+        timestamp: "2026-09-01T06:30:00.000Z",
+      },
+      {
+        type: "decision",
+        id: "decision-1",
+        description: "architecture",
+        timestamp: "2026-09-01T06:00:00.000Z",
+      },
+      {
+        type: "log",
+        id: "log-2",
+        description: "Encountered an issue",
+        timestamp: "2026-09-01T05:30:00.000Z",
+      },
+      {
+        type: "log",
+        id: "log-1",
+        description: "Started implementation",
+        timestamp: "2026-09-01T04:30:00.000Z",
+      },
+      {
+        type: "session",
+        id: "session-1",
+        description: "Session recorded",
+        timestamp: "2026-09-01T03:30:00.000Z",
+      },
+      {
+        type: "task",
+        id: "task-1",
+        description: "Task created: Build loader",
+        timestamp: "2026-09-01T03:30:00.000Z",
+      },
+    ]);
   });
 
-  it("maps session data and calculates session evaluations", () => {
-    const raw = createRawData();
+  it("builds the timeline from recent activity", () => {
+    const source = createReportData();
+    const result = processReportData(source);
 
-    const result = processReport(raw);
+    expect(result.overview.timeline).toEqual(
+      result.overview.recentActivity.map((activity) => ({
+        timestamp: activity.timestamp,
+        type: activity.type,
+        id: activity.id,
+        title: activity.description,
+      })),
+    );
+  });
 
-    expect(result.sessions.records).toEqual(raw.sessions.records);
-    expect(result.sessions.statistics).toEqual(raw.sessions.statistics);
+  it("maps sessions and derives session evaluations", () => {
+    const source = createReportData();
+    const result = processReportData(source);
+
+    expect(result.sessions.records).toBe(source.sessions.records);
+    expect(result.sessions.statistics).toEqual(source.sessions.statistics);
     expect(result.sessions.durationDistribution).toEqual(
-      raw.sessions.durationDistribution,
+      source.sessions.durationDistribution,
     );
-    expect(result.sessions.gaps).toEqual(raw.sessions.gaps);
+    expect(result.sessions.gaps).toEqual(source.sessions.gaps);
 
-    expect(result.sessions.activity).toEqual({
-      firstStart: "2026-09-01T09:00:00",
-      latestEnd: "2026-09-01T12:00:00",
-      calendarDays: 3,
-      activeDays: 2,
-      inactiveDays: 1,
-      dailyCounts: [
-        {
-          date: "2026-09-01",
-          value: 1,
-        },
-        {
-          date: "2026-09-03",
-          value: 1,
-        },
-      ],
-      dailyDurations: [
-        {
-          date: "2026-09-01",
-          value: 10800,
-        },
-        {
-          date: "2026-09-03",
-          value: 0,
-        },
-      ],
-      startByHour: [
-        {
-          label: "9",
-          count: 1,
-        },
-        {
-          label: "14",
-          count: 1,
-        },
-      ],
-      startByDayOfWeek: [
-        {
-          label: "Monday",
-          count: 1,
-        },
-        {
-          label: "Wednesday",
-          count: 1,
-        },
-      ],
-      averageStartTime: "11:30",
-      peakStartHour: 9,
-    });
+    expect(result.sessions.evaluations.averageSessionsPerActiveDay).toBe(1);
 
-    expect(result.sessions.evaluations).toEqual({
-      workContinuityRatio:
-        10800 /
-        ((Date.parse("2026-09-03T18:00:00") -
-          Date.parse("2026-09-01T09:00:00")) /
-          1000),
-      averageSessionsPerActiveDay: 1,
-      averageSessionsPerCalendarDay: 2 / 3,
-      averageRecordedTimePerActiveDay: 5400,
-      averageRecordedTimePerCalendarDay: 3600,
-    });
+    expect(result.sessions.evaluations.averageSessionsPerCalendarDay).toBe(1);
+
+    expect(
+      result.sessions.evaluations.averageRecordedTimePerActiveDay?.toMillis(),
+    ).toBe(90 * 60 * 1000);
+
+    expect(
+      result.sessions.evaluations.averageRecordedTimePerCalendarDay?.toMillis(),
+    ).toBe(90 * 60 * 1000);
+
+    expect(result.sessions.evaluations.workContinuityRatio).toBeCloseTo(
+      (3 * 60 * 60 * 1000) / (53 * 60 * 60 * 1000),
+    );
   });
 
-  it("maps task data and calculates task status percentages", () => {
-    const raw = createRawData();
+  it("returns null work continuity when fewer than two sessions exist", () => {
+    const source = createReportData();
 
-    const result = processReport(raw);
+    source.sessions.records = [source.sessions.records[0]];
 
-    expect(result.tasks.records).toEqual(raw.tasks.records);
-    expect(result.tasks.statistics).toEqual(raw.tasks.statistics);
+    const result = processReportData(source);
+
+    expect(result.sessions.evaluations.workContinuityRatio).toBeNull();
+  });
+
+  it("returns null work continuity when the calculated span is invalid", () => {
+    const source = createReportData();
+
+    source.sessions.records = [
+      {
+        ...source.sessions.records[0],
+        startTime: instant("2026-09-03T12:00:00+05:30"),
+        endTime: instant("2026-09-03T12:00:00+05:30"),
+      },
+      {
+        ...source.sessions.records[1],
+        startTime: instant("2026-09-03T12:00:00+05:30"),
+        endTime: instant("2026-09-03T12:00:00+05:30"),
+      },
+    ];
+
+    const result = processReportData(source);
+
+    expect(result.sessions.evaluations.workContinuityRatio).toBeNull();
+  });
+
+  it("maps tasks and resolves the task hierarchy", () => {
+    const source = createReportData();
+    const result = processReportData(source);
+
+    expect(result.tasks.records).toBe(source.tasks.records);
+    expect(result.tasks.statistics).toEqual(source.tasks.statistics);
     expect(result.tasks.statusDistribution).toEqual(
-      raw.tasks.statusDistribution,
+      source.tasks.statusDistribution,
     );
-    expect(result.tasks.hierarchy).toEqual(raw.tasks.hierarchy);
-    expect(result.tasks.blocked).toEqual(raw.tasks.blocked);
+    expect(result.tasks.blocked).toEqual(source.tasks.blocked);
 
-    expect(result.tasks.activity).toEqual({
-      createdByDay: [
-        {
-          date: "2026-09-01",
-          value: 1,
-        },
-        {
-          date: "2026-09-03",
-          value: 3,
-        },
-      ],
-      completedByDay: [
-        {
-          date: "2026-09-01",
-          value: 1,
-        },
-      ],
-    });
-
-    expect(result.tasks.evaluations).toEqual({
-      completionRate: 25,
-      pendingRate: 25,
-      inProgressRate: 25,
-      blockedRate: 25,
-      openRate: 75,
-    });
+    expect(result.tasks.tree).toEqual([
+      {
+        task: source.tasks.records[0],
+        children: [],
+      },
+      {
+        task: source.tasks.records[1],
+        children: [
+          {
+            task: source.tasks.records[2],
+            children: [],
+          },
+        ],
+      },
+      {
+        task: source.tasks.records[3],
+        children: [],
+      },
+    ]);
   });
 
-  it("maps log data and calculates log evaluations", () => {
-    const raw = createRawData();
+  it("maps logs and their task analysis", () => {
+    const source = createReportData();
+    const result = processReportData(source);
 
-    const result = processReport(raw);
+    expect(result.logs.records).toBe(source.logs.records);
+    expect(result.logs.statistics).toEqual(source.logs.statistics);
 
-    expect(result.logs.records).toEqual(raw.logs.records);
-    expect(result.logs.statistics).toEqual(raw.logs.statistics);
-    expect(result.logs.invalidReferences).toEqual(raw.logs.invalidReferences);
+    expect(result.logs.taskAnalysis).toEqual(source.logs.taskAnalysis);
+  });
 
-    expect(result.logs.activity).toEqual({
-      byDay: [
-        {
-          date: "2026-09-01",
-          value: 2,
-        },
-        {
-          date: "2026-09-03",
-          value: 1,
-        },
-      ],
-      byHour: [
-        {
-          label: "10",
-          count: 1,
-        },
-        {
-          label: "11",
-          count: 1,
-        },
-        {
-          label: "15",
-          count: 1,
-        },
-      ],
-    });
+  it("maps decisions and their references", () => {
+    const source = createReportData();
+    const result = processReportData(source);
 
-    expect(result.logs.taskAnalysis).toEqual({
-      mostLoggedTasks: [
-        {
-          id: "task-1",
-          count: 2,
-        },
-        {
-          id: "task-2",
-          count: 1,
-        },
-      ],
-      tasksWithoutLogs: ["task-3", "task-4"],
-      issuesByTask: [
-        {
-          id: "task-1",
-          count: 1,
-        },
-      ],
-      attemptsByTask: [
-        {
-          id: "task-2",
-          count: 1,
-        },
-      ],
-      repeatedAttempts: raw.logs.taskAnalysis.repeatedAttempts,
-    });
+    expect(result.decisions.records).toBe(source.decisions.records);
+    expect(result.decisions.statistics).toEqual(source.decisions.statistics);
+    expect(result.decisions.references).toEqual(source.decisions.references);
+  });
 
-    expect(result.logs.evaluations.typePercentages.note).toBeCloseTo(100 / 3);
-    expect(result.logs.evaluations.typePercentages.issue).toBeCloseTo(100 / 3);
-    expect(result.logs.evaluations.typePercentages.attempt).toBeCloseTo(
-      100 / 3,
+  it("finds the latest log and decision by timestamp rather than array position", () => {
+    const source = createReportData();
+
+    source.logs.records = [
+      source.logs.records[2],
+      source.logs.records[0],
+      source.logs.records[1],
+    ];
+
+    source.decisions.records = [
+      source.decisions.records[2],
+      source.decisions.records[0],
+      source.decisions.records[1],
+    ];
+
+    const result = processReportData(source);
+
+    expect(result.overview.currentState.latestLog).toBe(source.logs.records[0]);
+
+    expect(result.overview.currentState.latestDecision).toBe(
+      source.decisions.records[0],
     );
-
-    expect(result.logs.evaluations.issuePercentage).toBeCloseTo(100 / 3);
-    expect(result.logs.evaluations.attemptPercentage).toBeCloseTo(100 / 3);
-
-    expect(result.logs.evaluations.issueWithoutAttemptPercentage).toBe(100);
-    expect(result.logs.evaluations.logsPerRecordedHour).toBe(1);
   });
 
-  it("maps decision data and calculates decision evaluations", () => {
-    const raw = createRawData();
+  it("finds the task in progress independently of the active session", () => {
+    const source = createReportData();
 
-    const result = processReport(raw);
+    source.sessions.records = source.sessions.records.map((session) => ({
+      ...session,
+      status: "completed",
+      endTime: session.endTime ?? instant("2026-09-03T18:00:00+05:30"),
+    }));
 
-    expect(result.decisions.records).toEqual(raw.decisions.records);
-    expect(result.decisions.statistics).toEqual(raw.decisions.statistics);
-    expect(result.decisions.references).toEqual(raw.decisions.references);
+    const result = processReportData(source);
 
-    expect(result.decisions.activity).toEqual({
-      byDay: [
-        {
-          date: "2026-09-01",
-          value: 1,
-        },
-        {
-          date: "2026-09-03",
-          value: 2,
-        },
-      ],
-    });
-
-    expect(result.decisions.evaluations).toEqual({
-      topicPercentages: {
-        architecture: (2 / 3) * 100,
-        testing: (1 / 3) * 100,
-      },
-      tagPercentages: {
-        architecture: (2 / 3) * 100,
-        processor: (1 / 3) * 100,
-        testing: (1 / 3) * 100,
-      },
-      decisionsPerTask: 3 / 4,
-      decisionsPerSession: 3 / 2,
-      topTopicShare: (2 / 3) * 100,
-    });
+    expect(result.overview.currentState.activeSession).toBeNull();
+    expect(result.overview.currentState.activeTask).toBe(
+      source.tasks.records[1],
+    );
   });
 
-  it("returns zero for percentage calculations when there are no tasks", () => {
-    const raw = createRawData();
+  it("returns null for the active task when no task is in progress", () => {
+    const source = createReportData();
 
-    raw.tasks.statistics = {
-      ...raw.tasks.statistics,
+    source.tasks.records = source.tasks.records.map((task) => ({
+      ...task,
+      status: task.status === "in-progress" ? "pending" : task.status,
+    }));
+
+    const result = processReportData(source);
+
+    expect(result.overview.currentState.activeTask).toBeNull();
+  });
+
+  it("returns zero task rates when there are no tasks", () => {
+    const source = createReportData();
+
+    source.tasks.statistics = {
+      ...source.tasks.statistics,
       count: 0,
       completedCount: 0,
       pendingCount: 0,
@@ -813,91 +725,18 @@ describe("data/processor", () => {
       openCount: 0,
     };
 
-    raw.tasks.records = [];
+    const result = processReportData(source);
 
-    const result = processReport(raw);
-
-    expect(result.overview.metrics.taskCompletionRate).toBe(0);
-    expect(result.overview.metrics.taskOpenRate).toBe(0);
-
-    expect(result.tasks.evaluations).toEqual({
-      completionRate: 0,
-      pendingRate: 0,
-      inProgressRate: 0,
-      blockedRate: 0,
-      openRate: 0,
-    });
-
-    expect(result.decisions.evaluations.decisionsPerTask).toBe(0);
+    expect(result.overview.metrics.taskCompletionRate).toBeNull();
+    expect(result.overview.metrics.taskOpenRate).toBeNull();
   });
 
-  it("returns null for work continuity when the activity span is invalid", () => {
-    const raw = createRawData();
+  it("does not mutate the source data", () => {
+    const source = createReportData();
+    const before = JSON.stringify(source);
 
-    raw.metadata.dataRange = {
-      firstActivity: "2026-09-03T18:00:00",
-      lastActivity: "2026-09-03T18:00:00",
-    };
+    processReportData(source);
 
-    const result = processReport(raw);
-
-    expect(result.sessions.evaluations.workContinuityRatio).toBeNull();
-  });
-
-  it("returns null for top topic share when there are no decisions", () => {
-    const raw = createRawData();
-
-    raw.decisions.statistics = {
-      ...raw.decisions.statistics,
-      count: 0,
-      byTopic: [],
-    };
-
-    const result = processReport(raw);
-
-    expect(result.decisions.evaluations.topTopicShare).toBeNull();
-  });
-
-  it("returns the latest log and decision based on timestamp rather than record position", () => {
-    const raw = createRawData();
-
-    const latestLog = {
-      ...raw.logs.records[2],
-      id: "log-latest",
-      timestamp: "2026-09-05T10:00:00",
-    };
-
-    const latestDecision = {
-      ...raw.decisions.records[2],
-      id: "decision-latest",
-      timestamp: "2026-09-05T11:00:00",
-    };
-
-    raw.logs.records = [latestLog, raw.logs.records[0], raw.logs.records[1]];
-
-    raw.decisions.records = [
-      latestDecision,
-      raw.decisions.records[0],
-      raw.decisions.records[1],
-    ];
-
-    const result = processReport(raw);
-
-    expect(result.overview.currentState.latestLog).toEqual(latestLog);
-    expect(result.overview.currentState.latestDecision).toEqual(latestDecision);
-  });
-
-  it("returns no active task when there is no active session", () => {
-    const raw = createRawData();
-
-    raw.sessions.records = raw.sessions.records.map((session) => ({
-      ...session,
-      status: "completed",
-    }));
-
-    const result = processReport(raw);
-
-    expect(result.overview.currentState.activeSession).toBeNull();
-    expect(result.overview.currentState.activeTask).toBeNull();
+    expect(JSON.stringify(source)).toBe(before);
   });
 });

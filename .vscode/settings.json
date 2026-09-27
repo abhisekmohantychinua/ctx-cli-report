@@ -11,7 +11,7 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
-  "cSpell.words": ["favicons", "iconify", "preline"],
+  "cSpell.words": ["favicons", "iconify", "Kolkata", "luxon", "preline"],
   "mermaidChart.showGenerateDiagramCodeLens": false,
   "editor.codeLens": true,
   "js/ts.referencesCodeLens.enabled": true

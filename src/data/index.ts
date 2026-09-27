@@ -1,6 +1,6 @@
 import { loadContext } from "./loader";
-import { processReport } from "./processor";
-import type { ReportData } from "./models/report";
+import type { Data } from "./models/data";
+import { processReportData } from "./processor";
 
 /**
  * Loads the CTX project context and processes it into report data.
@@ -9,7 +9,7 @@ import type { ReportData } from "./models/report";
  *
  * @returns A page-oriented report model ready for UI rendering.
  */
-export async function bootstrapData(): Promise<ReportData> {
-  const rawData = await loadContext();
-  return processReport(rawData);
+export async function bootstrapData(): Promise<Data> {
+  const reportData = await loadContext();
+  return processReportData(reportData);
 }

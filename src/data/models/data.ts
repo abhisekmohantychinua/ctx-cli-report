@@ -30,7 +30,6 @@ export namespace Data {
    */
   export interface Metadata {
     project: Metadata.Project;
-    ctxVersion: string;
     generatedAt: DateTime;
     reportVersion: string;
   }

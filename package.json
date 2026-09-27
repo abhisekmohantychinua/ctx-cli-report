@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
+    "apexcharts": "^7.6.1",
     "iconify-icon": "^3.0.3",
     "luxon": "^3.7.2",
     "preline": "^4.2.0",

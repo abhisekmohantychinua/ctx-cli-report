@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 import type { ReportData } from "../data/models/report-data";
-
+import ApexCharts from "apexcharts";
+import { varToColor } from "preline/plugins/helper-shared";
 type Initializer = (data: ReportData, element: HTMLElement) => void;
 
 /**
@@ -59,80 +60,85 @@ function initializeTaskStatus(
     return;
   }
 
-  const colors: Record<string, string> = {
-    completed: "#259d72",
-    "in-progress": "#4389d9",
-    blocked: "#d85a3f",
-    pending: "#bdbdbd",
-  };
+  const labels = distribution.map((item) => formatStatusLabel(item.status));
 
-  const normalized = distribution.map((item) => ({
-    ...item,
-    key: item.status.toLowerCase().replace(/[_\s]+/g, "-"),
-    percentage: (item.count / total) * 100,
-  }));
+  const series = distribution.map((item) => item.count);
 
-  let offset = 0;
+  const chart = new ApexCharts(element, {
+    chart: {
+      type: "donut",
+      height: 180,
+    },
 
-  const segments = normalized
-    .map((item) => {
-      const start = offset;
-      offset += item.percentage;
+    series,
 
-      return `${colors[item.key] ?? "#824d00"} ${start}% ${offset}%`;
-    })
-    .join(", ");
+    labels,
 
-  const legend = normalized
-    .map(
-      (item) => `
-        <li class="flex items-center justify-between gap-4">
-          <span class="flex items-center gap-2">
-            <span
-              class="size-2 rounded-full"
-              style="background-color: ${colors[item.key] ?? "#824d00"}"
-            ></span>
+    legend: {
+      show: true,
+      position: "right",
+    },
 
-            <span class="text-muted text-sm">
-              ${formatStatusLabel(item.status)}
-            </span>
-          </span>
+    dataLabels: {
+      enabled: false,
+    },
 
-          <span class="text-foreground text-sm font-medium tabular-nums">
-            ${item.count}
-          </span>
-        </li>
-      `,
-    )
-    .join("");
+    stroke: {
+      width: 0,
+    },
+    colors: distribution.map((item) => getStatusColor(item.status)),
+    plotOptions: {
+      pie: {
+        spacing: 5,
+        borderRadius: 8,
+        donut: {
+          size: "72%",
+          labels: {
+            show: true,
+            name: {
+              show: false,
+            },
+            value: {
+              show: false,
+            },
+            total: {
+              show: true,
+              showAlways: true,
+              label: "Tasks",
+              formatter: () => String(total),
+            },
+          },
+        },
+      },
+    },
+  });
 
-  element.innerHTML = `
-    <div class="flex min-h-40 items-center justify-center gap-8">
-      <div
-        class="relative size-32 shrink-0 rounded-full"
-        style="background: conic-gradient(${segments})"
-        aria-label="Task status distribution"
-      >
-        <div
-          class="bg-background absolute inset-6 flex items-center justify-center rounded-full"
-        >
-          <span class="text-foreground text-xl font-semibold tabular-nums">
-            ${total}
-          </span>
-        </div>
-      </div>
-
-      <ul class="min-w-32 space-y-3">
-        ${legend}
-      </ul>
-    </div>
-  `;
+  void chart.render();
 }
 
 function formatStatusLabel(status: string): string {
   return status
     .replace(/[_-]+/g, " ")
     .replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function getStatusColor(status: string): string {
+  switch (status.toLowerCase().replace(/[_\s]+/g, "-")) {
+    case "completed":
+      return varToColor("--ctx-success") ?? "#287a4b";
+
+    case "in-progress":
+      return varToColor("--ctx-info") ?? "#245f9e";
+
+    case "blocked":
+      return varToColor("--ctx-danger") ?? "#b42318";
+
+    case "pending":
+      return varToColor("--ctx-muted-color") ?? "#6b6a67";
+
+    default:
+      return varToColor("--ctx-primary") ?? "#824d00";
+  }
 }
 
 function initializeRecentActivity(

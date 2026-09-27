@@ -1,61 +1,64 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import type { SourceData } from "../../src/data/models/source-data";
 import { bootstrapData } from "../../src/data";
 import * as loader from "../../src/data/loader";
 import * as processor from "../../src/data/processor";
-import type { RawReportData } from "../../src/data/models/raw";
-import type { ReportData } from "../../src/data/models/report";
 
 describe("bootstrapData", () => {
-  const rawData = {} as RawReportData;
-  const reportData = {} as ReportData;
+  const rawData = {} as SourceData;
+  const data = {} as ReturnType<typeof processor.processSourceData>;
 
   beforeEach(() => {
     vi.restoreAllMocks();
   });
 
-  it("loads the raw context and processes it into report data", async () => {
+  it("loads the raw context and processes it into data", async () => {
     const loadContext = vi
       .spyOn(loader, "loadContext")
       .mockResolvedValue(rawData);
 
-    const processReport = vi
-      .spyOn(processor, "processReport")
-      .mockReturnValue(reportData);
+    const processReportData = vi
+      .spyOn(processor, "processSourceData")
+      .mockReturnValue(data);
 
     const result = await bootstrapData();
 
     expect(loadContext).toHaveBeenCalledOnce();
-    expect(processReport).toHaveBeenCalledOnce();
-    expect(processReport).toHaveBeenCalledWith(rawData);
-    expect(result).toBe(reportData);
+    expect(processReportData).toHaveBeenCalledOnce();
+    expect(processReportData).toHaveBeenCalledWith(rawData);
+    expect(result).toBe(data);
   });
 
   it("propagates an error when loading the context fails", async () => {
     const error = new Error("Failed to load context");
 
-    vi.spyOn(loader, "loadContext").mockRejectedValue(error);
+    const loadContext = vi
+      .spyOn(loader, "loadContext")
+      .mockRejectedValue(error);
 
-    const processReport = vi.spyOn(processor, "processReport");
+    const processReportData = vi.spyOn(processor, "processSourceData");
 
     await expect(bootstrapData()).rejects.toBe(error);
 
-    expect(processReport).not.toHaveBeenCalled();
+    expect(loadContext).toHaveBeenCalledOnce();
+    expect(processReportData).not.toHaveBeenCalled();
   });
 
   it("propagates an error when report processing fails", async () => {
-    const error = new Error("Failed to process report");
+    const error = new Error("Failed to process report data");
 
     vi.spyOn(loader, "loadContext").mockResolvedValue(rawData);
 
-    const processReport = vi
-      .spyOn(processor, "processReport")
+    const processReportData = vi
+      .spyOn(processor, "processSourceData")
       .mockImplementation(() => {
         throw error;
       });
 
     await expect(bootstrapData()).rejects.toBe(error);
 
-    expect(processReport).toHaveBeenCalledWith(rawData);
+    expect(processReportData).toHaveBeenCalledOnce();
+    expect(processReportData).toHaveBeenCalledWith(rawData);
   });
 });

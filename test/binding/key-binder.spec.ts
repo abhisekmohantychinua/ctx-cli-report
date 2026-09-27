@@ -1,16 +1,18 @@
-import { format } from "date-fns";
-import { TZDate } from "@date-fns/tz";
+import { DateTime } from "luxon";
 import { describe, expect, it } from "vitest";
 
-import type { ReportData } from "../../src/data/models/report";
+import type { ReportData } from "../../src/data/models/report-data";
 import { bindKey } from "../../src/binding/key-binder";
 
 describe("binding/key-binder", () => {
-  const generatedAt = new Date("2026-09-19T07:30:00.000Z");
-  const dateTimeTemplate = "dd-MMM-yyyy hh:mm a";
+  const generatedAt = DateTime.fromISO("2026-09-19T07:30:00.000Z", {
+    setZone: true,
+  });
+
+  const dateTimeTemplate = "dd-LLL-yyyy hh:mm a";
   const timeZone = "Asia/Kolkata";
 
-  const reportData = {
+  const data = {
     metadata: {
       project: {
         name: "CTX CLI",
@@ -24,7 +26,7 @@ describe("binding/key-binder", () => {
   it("binds the project name", () => {
     const element = document.createElement("span");
 
-    bindKey(reportData, "metadata.project.name", element);
+    bindKey(data, "metadata.project.name", element);
 
     expect(element.textContent).toBe("CTX CLI");
   });
@@ -32,10 +34,10 @@ describe("binding/key-binder", () => {
   it("binds the generated date using the report date-time template and timezone", () => {
     const element = document.createElement("span");
 
-    bindKey(reportData, "metadata.generatedAt", element);
+    bindKey(data, "metadata.generatedAt", element);
 
     expect(element.textContent).toBe(
-      format(new TZDate(generatedAt, timeZone), dateTimeTemplate),
+      generatedAt.setZone(timeZone).toFormat(dateTimeTemplate),
     );
   });
 
@@ -43,7 +45,7 @@ describe("binding/key-binder", () => {
     const element = document.createElement("span");
     element.textContent = "Previous value";
 
-    bindKey(reportData, "metadata.project.name", element);
+    bindKey(data, "metadata.project.name", element);
 
     expect(element.textContent).toBe("CTX CLI");
   });
@@ -52,7 +54,7 @@ describe("binding/key-binder", () => {
     const element = document.createElement("span");
 
     expect(() => {
-      bindKey(reportData, "metadata.unknown", element);
+      bindKey(data, "metadata.unknown", element);
     }).toThrow("Key not defined: metadata.unknown");
   });
 });

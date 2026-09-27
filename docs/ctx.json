@@ -1,0 +1,632 @@
+{
+  "metadata" : {
+    "project" : {
+      "name" : "sandbox",
+      "root" : "D:\\Project-MultiStack\\CTX CLI\\sandbox",
+      "createdAt" : "2026-08-28T11:34:29.579Z",
+      "version" : "0.1.0-SNAPSHOT",
+      "timezone" : "Asia/Calcutta",
+      "dateTimeTemplate" : "dd MMM yyyy hh:mm:ss a z"
+    },
+    "generatedAt" : "2026-09-25T11:34:50.178735400Z",
+    "reportVersion" : "0.1.0-SNAPSHOT"
+  },
+  "sessions" : {
+    "records" : [ {
+      "id" : "S1",
+      "startTime" : "2026-08-29T16:13:16.711Z",
+      "endTime" : "2026-08-29T17:43:34.200Z",
+      "duration" : "PT1H30M17.489S",
+      "note" : "Working on MultiStack CLI",
+      "status" : "completed"
+    }, {
+      "id" : "S2",
+      "startTime" : "2026-08-31T06:24:38.889Z",
+      "endTime" : "2026-09-04T13:10:36.618Z",
+      "duration" : "PT102H45M57.729S",
+      "note" : "Implementing payment retry feature.",
+      "status" : "completed"
+    }, {
+      "id" : "S3",
+      "startTime" : "2026-09-04T13:10:36.628Z",
+      "endTime" : "2026-09-04T13:11:06.881Z",
+      "duration" : "PT30.253S",
+      "note" : "Working on payment retry test.",
+      "status" : "completed"
+    }, {
+      "id" : "S4",
+      "startTime" : "2026-09-04T13:11:06.881Z",
+      "endTime" : "2026-09-04T13:17:11.545Z",
+      "duration" : "PT6M4.664S",
+      "note" : null,
+      "status" : "completed"
+    } ],
+    "statistics" : {
+      "count" : 4,
+      "completedCount" : 4,
+      "activeCount" : 0,
+      "totalDuration" : "PT104H22M50.135S",
+      "averageDuration" : "PT26H5M42.53375S",
+      "medianDuration" : "PT48M11.0765S",
+      "longestDuration" : "PT102H45M57.729S",
+      "shortestDuration" : "PT30.253S"
+    },
+    "durationDistribution" : [ {
+      "label" : "0-1h",
+      "count" : 2
+    }, {
+      "label" : "1-2h",
+      "count" : 1
+    }, {
+      "label" : "2-3h",
+      "count" : 0
+    }, {
+      "label" : "3-4h",
+      "count" : 0
+    }, {
+      "label" : "4h+",
+      "count" : 1
+    } ],
+    "gaps" : {
+      "values" : [ "PT0S", "PT0.01S", "PT36H41M4.689S" ],
+      "average" : "PT12H13M41.566333333S",
+      "median" : "PT0.01S",
+      "longest" : "PT36H41M4.689S",
+      "shortest" : "PT0S",
+      "distribution" : [ {
+        "label" : "0-1h",
+        "count" : 2
+      }, {
+        "label" : "1-2h",
+        "count" : 0
+      }, {
+        "label" : "2-3h",
+        "count" : 0
+      }, {
+        "label" : "3-4h",
+        "count" : 0
+      }, {
+        "label" : "4h+",
+        "count" : 1
+      } ]
+    }
+  },
+  "tasks" : {
+    "records" : [ {
+      "id" : "T1",
+      "title" : "Build Project Management System",
+      "description" : null,
+      "status" : "PENDING",
+      "createdAt" : "2026-08-30T10:23:38.265Z",
+      "completedAt" : null,
+      "completionDuration" : null,
+      "blockReason" : null,
+      "subtaskCount" : 3
+    }, {
+      "id" : "T2",
+      "title" : "Design System Architecture",
+      "description" : null,
+      "status" : "PENDING",
+      "createdAt" : "2026-08-30T10:23:51.732Z",
+      "completedAt" : null,
+      "completionDuration" : null,
+      "blockReason" : null,
+      "subtaskCount" : 6
+    }, {
+      "id" : "T3",
+      "title" : "Implement Core Features",
+      "description" : null,
+      "status" : "PENDING",
+      "createdAt" : "2026-08-30T10:24:05.466Z",
+      "completedAt" : null,
+      "completionDuration" : null,
+      "blockReason" : null,
+      "subtaskCount" : 3
+    }, {
+      "id" : "T4",
+      "title" : "Testing and Deployment",
+      "description" : null,
+      "status" : "COMPLETED",
+      "createdAt" : "2026-08-30T10:24:17.701Z",
+      "completedAt" : "2026-09-04T15:31:13.417Z",
+      "completionDuration" : "PT125H6M55.716S",
+      "blockReason" : null,
+      "subtaskCount" : 3
+    }, {
+      "id" : "T5",
+      "title" : "Design Database Schema",
+      "description" : null,
+      "status" : "COMPLETED",
+      "createdAt" : "2026-08-30T10:24:39.932Z",
+      "completedAt" : "2026-08-30T10:29:04.684Z",
+      "completionDuration" : "PT4M24.752S",
+      "blockReason" : null,
+      "subtaskCount" : 0
+    }, {
+      "id" : "T6",
+      "title" : "Design API Structure",
+      "description" : null,
+      "status" : "COMPLETED",
+      "createdAt" : "2026-08-30T10:24:50.466Z",
+      "completedAt" : "2026-08-30T10:29:04.733Z",
+      "completionDuration" : "PT4M14.267S",
+      "blockReason" : null,
+      "subtaskCount" : 0
+    }, {
+      "id" : "T7",
+      "title" : "Define Authentication Strategy",
+      "description" : null,
+      "status" : "IN_PROGRESS",
+      "createdAt" : "2026-08-30T10:25:01.466Z",
+      "completedAt" : null,
+      "completionDuration" : null,
+      "blockReason" : null,
+      "subtaskCount" : 0
+    }, {
+      "id" : "T8",
+      "title" : "Implement User Management",
+      "description" : "Implement user registration, login, profile management, and basic user administration features.",
+      "status" : "COMPLETED",
+      "createdAt" : "2026-08-30T10:25:17.383Z",
+      "completedAt" : "2026-09-04T15:10:52.283Z",
+      "completionDuration" : "PT124H45M34.9S",
+      "blockReason" : null,
+      "subtaskCount" : 0
+    }, {
+      "id" : "T9",
+      "title" : "Implement Task Management",
+      "description" : null,
+      "status" : "COMPLETED",
+      "createdAt" : "2026-08-30T10:25:29.684Z",
+      "completedAt" : "2026-08-30T10:29:06.213Z",
+      "completionDuration" : "PT3M36.529S",
+      "blockReason" : null,
+      "subtaskCount" : 0
+    }, {
+      "id" : "T10",
+      "title" : "Implement Notifications",
+      "description" : null,
+      "status" : "PENDING",
+      "createdAt" : "2026-08-30T10:25:38.633Z",
+      "completedAt" : null,
+      "completionDuration" : null,
+      "blockReason" : null,
+      "subtaskCount" : 0
+    }, {
+      "id" : "T11",
+      "title" : "Write Unit Tests",
+      "description" : null,
+      "status" : "COMPLETED",
+      "createdAt" : "2026-08-30T10:25:45.333Z",
+      "completedAt" : "2026-09-04T15:31:13.417Z",
+      "completionDuration" : "PT125H5M28.084S",
+      "blockReason" : null,
+      "subtaskCount" : 0
+    }, {
+      "id" : "T12",
+      "title" : "Run Integration Tests",
+      "description" : null,
+      "status" : "COMPLETED",
+      "createdAt" : "2026-08-30T10:26:01.266Z",
+      "completedAt" : "2026-09-04T15:31:13.417Z",
+      "completionDuration" : "PT125H5M12.151S",
+      "blockReason" : null,
+      "subtaskCount" : 0
+    }, {
+      "id" : "T13",
+      "title" : "Configure Production Deployment",
+      "description" : null,
+      "status" : "COMPLETED",
+      "createdAt" : "2026-08-30T10:26:14.933Z",
+      "completedAt" : "2026-09-04T15:31:13.417Z",
+      "completionDuration" : "PT125H4M58.484S",
+      "blockReason" : null,
+      "subtaskCount" : 0
+    }, {
+      "id" : "T14",
+      "title" : "Implement payment retry.",
+      "description" : null,
+      "status" : "PENDING",
+      "createdAt" : "2026-08-31T06:10:13.180Z",
+      "completedAt" : null,
+      "completionDuration" : null,
+      "blockReason" : null,
+      "subtaskCount" : 0
+    }, {
+      "id" : "T15",
+      "title" : "Define service layer for business logic",
+      "description" : null,
+      "status" : "PENDING",
+      "createdAt" : "2026-09-04T14:46:04.551Z",
+      "completedAt" : null,
+      "completionDuration" : null,
+      "blockReason" : null,
+      "subtaskCount" : 0
+    }, {
+      "id" : "T17",
+      "title" : "Define Logging and Tracing ",
+      "description" : null,
+      "status" : "PENDING",
+      "createdAt" : "2026-09-04T14:48:54.771Z",
+      "completedAt" : null,
+      "completionDuration" : null,
+      "blockReason" : null,
+      "subtaskCount" : 0
+    }, {
+      "id" : "T19",
+      "title" : "Define ENV variable standards",
+      "description" : "Design the system which selects the value for certain key based on env like dev, prod, test.",
+      "status" : "PENDING",
+      "createdAt" : "2026-09-04T14:51:57.704Z",
+      "completedAt" : null,
+      "completionDuration" : null,
+      "blockReason" : null,
+      "subtaskCount" : 0
+    } ],
+    "statistics" : {
+      "count" : 17,
+      "completedCount" : 8,
+      "pendingCount" : 8,
+      "inProgressCount" : 1,
+      "blockedCount" : 0,
+      "openCount" : 9,
+      "rootCount" : 2,
+      "subtaskCount" : 15,
+      "maxDepth" : 3,
+      "averageCompletionDuration" : "PT78H10M3.110375S",
+      "medianCompletionDuration" : "PT124H55M16.692S",
+      "longestCompletionDuration" : "PT125H6M55.716S",
+      "shortestCompletionDuration" : "PT3M36.529S"
+    },
+    "statusDistribution" : [ {
+      "status" : "PENDING",
+      "count" : 8
+    }, {
+      "status" : "IN_PROGRESS",
+      "count" : 1
+    }, {
+      "status" : "BLOCKED",
+      "count" : 0
+    }, {
+      "status" : "COMPLETED",
+      "count" : 8
+    } ],
+    "tree" : [ {
+      "task" : {
+        "id" : "T1",
+        "title" : "Build Project Management System",
+        "description" : null,
+        "status" : "PENDING",
+        "createdAt" : "2026-08-30T10:23:38.265Z",
+        "completedAt" : null,
+        "completionDuration" : null,
+        "blockReason" : null,
+        "subtaskCount" : 3
+      },
+      "children" : [ {
+        "task" : {
+          "id" : "T2",
+          "title" : "Design System Architecture",
+          "description" : null,
+          "status" : "PENDING",
+          "createdAt" : "2026-08-30T10:23:51.732Z",
+          "completedAt" : null,
+          "completionDuration" : null,
+          "blockReason" : null,
+          "subtaskCount" : 6
+        },
+        "children" : [ {
+          "task" : {
+            "id" : "T5",
+            "title" : "Design Database Schema",
+            "description" : null,
+            "status" : "COMPLETED",
+            "createdAt" : "2026-08-30T10:24:39.932Z",
+            "completedAt" : "2026-08-30T10:29:04.684Z",
+            "completionDuration" : "PT4M24.752S",
+            "blockReason" : null,
+            "subtaskCount" : 0
+          },
+          "children" : [ ]
+        }, {
+          "task" : {
+            "id" : "T6",
+            "title" : "Design API Structure",
+            "description" : null,
+            "status" : "COMPLETED",
+            "createdAt" : "2026-08-30T10:24:50.466Z",
+            "completedAt" : "2026-08-30T10:29:04.733Z",
+            "completionDuration" : "PT4M14.267S",
+            "blockReason" : null,
+            "subtaskCount" : 0
+          },
+          "children" : [ ]
+        }, {
+          "task" : {
+            "id" : "T7",
+            "title" : "Define Authentication Strategy",
+            "description" : null,
+            "status" : "IN_PROGRESS",
+            "createdAt" : "2026-08-30T10:25:01.466Z",
+            "completedAt" : null,
+            "completionDuration" : null,
+            "blockReason" : null,
+            "subtaskCount" : 0
+          },
+          "children" : [ ]
+        }, {
+          "task" : {
+            "id" : "T15",
+            "title" : "Define service layer for business logic",
+            "description" : null,
+            "status" : "PENDING",
+            "createdAt" : "2026-09-04T14:46:04.551Z",
+            "completedAt" : null,
+            "completionDuration" : null,
+            "blockReason" : null,
+            "subtaskCount" : 0
+          },
+          "children" : [ ]
+        }, {
+          "task" : {
+            "id" : "T17",
+            "title" : "Define Logging and Tracing ",
+            "description" : null,
+            "status" : "PENDING",
+            "createdAt" : "2026-09-04T14:48:54.771Z",
+            "completedAt" : null,
+            "completionDuration" : null,
+            "blockReason" : null,
+            "subtaskCount" : 0
+          },
+          "children" : [ ]
+        }, {
+          "task" : {
+            "id" : "T19",
+            "title" : "Define ENV variable standards",
+            "description" : "Design the system which selects the value for certain key based on env like dev, prod, test.",
+            "status" : "PENDING",
+            "createdAt" : "2026-09-04T14:51:57.704Z",
+            "completedAt" : null,
+            "completionDuration" : null,
+            "blockReason" : null,
+            "subtaskCount" : 0
+          },
+          "children" : [ ]
+        } ]
+      }, {
+        "task" : {
+          "id" : "T3",
+          "title" : "Implement Core Features",
+          "description" : null,
+          "status" : "PENDING",
+          "createdAt" : "2026-08-30T10:24:05.466Z",
+          "completedAt" : null,
+          "completionDuration" : null,
+          "blockReason" : null,
+          "subtaskCount" : 3
+        },
+        "children" : [ {
+          "task" : {
+            "id" : "T8",
+            "title" : "Implement User Management",
+            "description" : "Implement user registration, login, profile management, and basic user administration features.",
+            "status" : "COMPLETED",
+            "createdAt" : "2026-08-30T10:25:17.383Z",
+            "completedAt" : "2026-09-04T15:10:52.283Z",
+            "completionDuration" : "PT124H45M34.9S",
+            "blockReason" : null,
+            "subtaskCount" : 0
+          },
+          "children" : [ ]
+        }, {
+          "task" : {
+            "id" : "T9",
+            "title" : "Implement Task Management",
+            "description" : null,
+            "status" : "COMPLETED",
+            "createdAt" : "2026-08-30T10:25:29.684Z",
+            "completedAt" : "2026-08-30T10:29:06.213Z",
+            "completionDuration" : "PT3M36.529S",
+            "blockReason" : null,
+            "subtaskCount" : 0
+          },
+          "children" : [ ]
+        }, {
+          "task" : {
+            "id" : "T10",
+            "title" : "Implement Notifications",
+            "description" : null,
+            "status" : "PENDING",
+            "createdAt" : "2026-08-30T10:25:38.633Z",
+            "completedAt" : null,
+            "completionDuration" : null,
+            "blockReason" : null,
+            "subtaskCount" : 0
+          },
+          "children" : [ ]
+        } ]
+      }, {
+        "task" : {
+          "id" : "T4",
+          "title" : "Testing and Deployment",
+          "description" : null,
+          "status" : "COMPLETED",
+          "createdAt" : "2026-08-30T10:24:17.701Z",
+          "completedAt" : "2026-09-04T15:31:13.417Z",
+          "completionDuration" : "PT125H6M55.716S",
+          "blockReason" : null,
+          "subtaskCount" : 3
+        },
+        "children" : [ {
+          "task" : {
+            "id" : "T11",
+            "title" : "Write Unit Tests",
+            "description" : null,
+            "status" : "COMPLETED",
+            "createdAt" : "2026-08-30T10:25:45.333Z",
+            "completedAt" : "2026-09-04T15:31:13.417Z",
+            "completionDuration" : "PT125H5M28.084S",
+            "blockReason" : null,
+            "subtaskCount" : 0
+          },
+          "children" : [ ]
+        }, {
+          "task" : {
+            "id" : "T12",
+            "title" : "Run Integration Tests",
+            "description" : null,
+            "status" : "COMPLETED",
+            "createdAt" : "2026-08-30T10:26:01.266Z",
+            "completedAt" : "2026-09-04T15:31:13.417Z",
+            "completionDuration" : "PT125H5M12.151S",
+            "blockReason" : null,
+            "subtaskCount" : 0
+          },
+          "children" : [ ]
+        }, {
+          "task" : {
+            "id" : "T13",
+            "title" : "Configure Production Deployment",
+            "description" : null,
+            "status" : "COMPLETED",
+            "createdAt" : "2026-08-30T10:26:14.933Z",
+            "completedAt" : "2026-09-04T15:31:13.417Z",
+            "completionDuration" : "PT125H4M58.484S",
+            "blockReason" : null,
+            "subtaskCount" : 0
+          },
+          "children" : [ ]
+        } ]
+      } ]
+    }, {
+      "task" : {
+        "id" : "T14",
+        "title" : "Implement payment retry.",
+        "description" : null,
+        "status" : "PENDING",
+        "createdAt" : "2026-08-31T06:10:13.180Z",
+        "completedAt" : null,
+        "completionDuration" : null,
+        "blockReason" : null,
+        "subtaskCount" : 0
+      },
+      "children" : [ ]
+    } ],
+    "blocked" : [ ]
+  },
+  "logs" : {
+    "records" : [ {
+      "id" : "L1",
+      "timestamp" : "2026-08-30T16:20:53.884Z",
+      "note" : "Goolge oauth2 has incorrect origin.",
+      "type" : "ISSUE",
+      "reference" : null
+    }, {
+      "id" : "L2",
+      "timestamp" : "2026-08-31T06:05:55.670Z",
+      "note" : "Payment API returns an invalid response.",
+      "type" : "ISSUE",
+      "reference" : {
+        "type" : "TASK",
+        "id" : "T14"
+      }
+    }, {
+      "id" : "L3",
+      "timestamp" : "2026-08-31T06:19:14.084Z",
+      "note" : "Stripe timeout occurs after 10 seconds.",
+      "type" : "NOTE",
+      "reference" : {
+        "type" : "TASK",
+        "id" : "T14"
+      }
+    } ],
+    "statistics" : {
+      "count" : 3,
+      "unlinkedCount" : 1,
+      "firstTimestamp" : "2026-08-30T16:20:53.884Z",
+      "latestTimestamp" : "2026-08-31T06:19:14.084Z",
+      "byType" : {
+        "note" : 1,
+        "idea" : 0,
+        "issue" : 2,
+        "attempt" : 0
+      },
+      "issuesCount" : 2,
+      "attemptsCount" : 0,
+      "logsPerSession" : 0.0,
+      "logsPerTask" : 2.0,
+      "tasksWithLogs" : 1,
+      "tasksWithoutLogs" : 16
+    },
+    "taskAnalysis" : {
+      "mostLoggedTasks" : [ {
+        "taskId" : "T14",
+        "count" : 2
+      } ],
+      "tasksWithoutLogs" : [ "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12", "T13", "T15", "T17", "T19" ],
+      "issuesByTask" : [ {
+        "taskId" : "T14",
+        "count" : 1
+      } ],
+      "attemptsByTask" : [ ],
+      "repeatedAttempts" : [ ]
+    }
+  },
+  "decisions" : {
+    "records" : [ {
+      "id" : "D1",
+      "topic" : "Use PostgreSQL for the application database",
+      "reasoning" : "PostgreSQL provides strong relational integrity and transaction support, which fits our application requirements.",
+      "tags" : [ "database", "architecture", "backend" ],
+      "timestamp" : "2026-08-30T16:23:36.600Z",
+      "reference" : {
+        "type" : "TASK",
+        "id" : "T5"
+      }
+    }, {
+      "id" : "D2",
+      "topic" : "Use idempotency keys for retry protection.",
+      "reasoning" : "Use idempotency keys on retryable operations so repeated requests can be safely detected and prevented from causing duplicate side effects.",
+      "tags" : [ ],
+      "timestamp" : "2026-08-31T06:21:23.032Z",
+      "reference" : {
+        "type" : "TASK",
+        "id" : "T14"
+      }
+    } ],
+    "statistics" : {
+      "count" : 2,
+      "unlinkedCount" : 0,
+      "firstTimestamp" : "2026-08-30T16:23:36.600Z",
+      "latestTimestamp" : "2026-08-31T06:21:23.032Z",
+      "byTopic" : [ {
+        "topic" : "Use PostgreSQL for the application database",
+        "count" : 1
+      }, {
+        "topic" : "Use idempotency keys for retry protection.",
+        "count" : 1
+      } ],
+      "repeatedTopics" : [ ],
+      "uncategorizedCount" : 1,
+      "byTag" : [ {
+        "tag" : "architecture",
+        "count" : 1
+      }, {
+        "tag" : "backend",
+        "count" : 1
+      }, {
+        "tag" : "database",
+        "count" : 1
+      } ]
+    },
+    "references" : {
+      "byType" : {
+        "task" : 2,
+        "session" : 0
+      },
+      "tasksWithDecisions" : [ "T14", "T5" ],
+      "sessionsWithDecisions" : [ ]
+    }
+  }
+}

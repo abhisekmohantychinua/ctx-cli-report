@@ -200,7 +200,479 @@
       </aside>
 
       <!-- Page-specific content -->
-      <main class="min-w-0 flex-1"></main>
+      <main class="min-w-0 flex-1 overflow-auto">
+        <div class="mx-auto w-full max-w-[1600px] px-8 py-8">
+          <!-- Page header -->
+          <div class="mb-6">
+            <div class="flex items-center gap-3">
+              <h1 class="text-3xl font-semibold tracking-tight">
+                Project Execution Report
+              </h1>
+
+              <span
+                class="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium"
+              >
+                Overview
+              </span>
+            </div>
+
+            <p class="text-muted mt-2 text-sm">
+              A snapshot of your project's execution context, activity and
+              progress.
+            </p>
+          </div>
+
+          <!-- Project overview -->
+          <section
+            class="border-border bg-background mb-4 rounded-lg border"
+            aria-labelledby="project-overview-heading"
+          >
+            <div
+              class="grid grid-cols-1 divide-y lg:grid-cols-[1.1fr_2fr] lg:divide-x lg:divide-y-0"
+            >
+              <!-- Project information -->
+              <div class="p-6">
+                <p
+                  id="project-overview-heading"
+                  class="text-muted mb-2 text-xs font-medium"
+                >
+                  Project
+                </p>
+
+                <h2
+                  class="text-2xl font-semibold tracking-tight"
+                  data-key="metadata.project.name"
+                >
+                  CTX CLI
+                </h2>
+
+                <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                  <!-- Created -->
+                  <div>
+                    <div
+                      class="text-muted flex items-center gap-2 text-xs font-medium"
+                    >
+                      <iconify-icon
+                        icon="mdi:calendar-outline"
+                        class="text-lg"
+                        aria-hidden="true"
+                      ></iconify-icon>
+
+                      <span>Created</span>
+                    </div>
+
+                    <time
+                      class="text-foreground mt-1 block text-sm tabular-nums"
+                      data-key="metadata.project.createdAt"
+                    >
+                      2025-05-12
+                    </time>
+                  </div>
+
+                  <!-- Location -->
+                  <div>
+                    <div
+                      class="text-muted flex items-center gap-2 text-xs font-medium"
+                    >
+                      <iconify-icon
+                        icon="mdi:folder-outline"
+                        class="text-lg"
+                        aria-hidden="true"
+                      ></iconify-icon>
+
+                      <span>Location</span>
+                    </div>
+
+                    <span
+                      class="text-foreground mt-1 block truncate text-sm"
+                      data-key="metadata.project.root"
+                    >
+                      /projects/ctx-cli
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Metrics -->
+              <div class="grid grid-cols-2 divide-x md:grid-cols-4">
+                <!-- Sessions -->
+                <div class="p-6">
+                  <div
+                    class="text-muted flex items-center gap-2 text-xs font-medium"
+                  >
+                    <iconify-icon
+                      icon="mdi:calendar-multiple-check"
+                      class="text-xl"
+                      aria-hidden="true"
+                    ></iconify-icon>
+
+                    <span>Total Sessions</span>
+                  </div>
+
+                  <p
+                    class="text-foreground mt-4 text-2xl font-semibold tabular-nums"
+                    data-key="overview.metrics.sessions"
+                  >
+                    24
+                  </p>
+                </div>
+
+                <!-- Recorded time -->
+                <div class="p-6">
+                  <div
+                    class="text-muted flex items-center gap-2 text-xs font-medium"
+                  >
+                    <iconify-icon
+                      icon="mdi:clock-outline"
+                      class="text-xl"
+                      aria-hidden="true"
+                    ></iconify-icon>
+
+                    <span>Total Work Time</span>
+                  </div>
+
+                  <p
+                    class="text-foreground mt-4 text-2xl font-semibold tabular-nums"
+                    data-key="overview.metrics.recordedDuration"
+                  >
+                    18h 42m
+                  </p>
+                </div>
+
+                <!-- Active days -->
+                <div class="p-6">
+                  <div
+                    class="text-muted flex items-center gap-2 text-xs font-medium"
+                  >
+                    <iconify-icon
+                      icon="mdi:calendar-range"
+                      class="text-xl"
+                      aria-hidden="true"
+                    ></iconify-icon>
+
+                    <span>Active Days</span>
+                  </div>
+
+                  <p
+                    class="text-foreground mt-4 text-2xl font-semibold tabular-nums"
+                    data-key="overview.metrics.activeDays"
+                  >
+                    12
+                  </p>
+                </div>
+
+                <!-- Completion -->
+                <div class="p-6">
+                  <div
+                    class="text-muted flex items-center gap-2 text-xs font-medium"
+                  >
+                    <iconify-icon
+                      icon="mdi:progress-check"
+                      class="text-xl"
+                      aria-hidden="true"
+                    ></iconify-icon>
+
+                    <span>Task Completion</span>
+                  </div>
+
+                  <p
+                    class="text-foreground mt-4 text-2xl font-semibold tabular-nums"
+                    data-key="overview.metrics.taskCompletionRate"
+                  >
+                    59%
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Count cards -->
+          <section
+            class="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3"
+            aria-label="Project totals"
+          >
+            <!-- Tasks -->
+            <article class="border-border bg-background rounded-lg border p-5">
+              <div
+                class="text-muted flex items-center gap-2 text-sm font-medium"
+              >
+                <iconify-icon
+                  icon="mdi:checkbox-marked-outline"
+                  class="text-xl"
+                  aria-hidden="true"
+                ></iconify-icon>
+
+                <span>Total Tasks</span>
+              </div>
+
+              <p
+                class="text-foreground mt-4 text-3xl font-semibold tabular-nums"
+                data-key="overview.metrics.tasks"
+              >
+                42
+              </p>
+            </article>
+
+            <!-- Logs -->
+            <article class="border-border bg-background rounded-lg border p-5">
+              <div
+                class="text-muted flex items-center gap-2 text-sm font-medium"
+              >
+                <iconify-icon
+                  icon="mdi:text-box-outline"
+                  class="text-xl"
+                  aria-hidden="true"
+                ></iconify-icon>
+
+                <span>Total Logs</span>
+              </div>
+
+              <p
+                class="text-foreground mt-4 text-3xl font-semibold tabular-nums"
+                data-key="overview.metrics.logs"
+              >
+                187
+              </p>
+            </article>
+
+            <!-- Decisions -->
+            <article class="border-border bg-background rounded-lg border p-5">
+              <div
+                class="text-muted flex items-center gap-2 text-sm font-medium"
+              >
+                <iconify-icon
+                  icon="mdi:lightbulb-outline"
+                  class="text-xl"
+                  aria-hidden="true"
+                ></iconify-icon>
+
+                <span>Total Decisions</span>
+              </div>
+
+              <p
+                class="text-foreground mt-4 text-3xl font-semibold tabular-nums"
+                data-key="overview.metrics.decisions"
+              >
+                16
+              </p>
+            </article>
+          </section>
+
+          <!-- Task status + current execution -->
+          <section class="mb-4 grid grid-cols-1 gap-4 xl:grid-cols-[1fr_2fr]">
+            <!-- Task status -->
+            <article
+              class="border-border bg-background rounded-lg border p-5"
+              aria-labelledby="task-status-heading"
+            >
+              <div class="mb-5 flex items-center justify-between">
+                <h2 id="task-status-heading" class="text-lg font-semibold">
+                  Task Status
+                </h2>
+
+                <span
+                  class="text-muted text-xs"
+                  data-key="overview.metrics.tasks"
+                >
+                  42
+                </span>
+              </div>
+
+              <div
+                data-initializer="overview.task-status"
+                class="min-h-40"
+              ></div>
+            </article>
+
+            <!-- Current execution state -->
+            <article
+              class="border-border bg-background rounded-lg border p-5"
+              aria-labelledby="current-state-heading"
+            >
+              <div class="mb-5 flex items-center gap-3">
+                <h2 id="current-state-heading" class="text-lg font-semibold">
+                  Current Execution State
+                </h2>
+
+                <span
+                  class="bg-success/10 text-success inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium"
+                >
+                  <span
+                    class="bg-success size-1.5 rounded-full"
+                    aria-hidden="true"
+                  ></span>
+
+                  <span data-key="overview.currentState.activeSession.status">
+                    Active
+                  </span>
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <!-- Active session -->
+                <div class="bg-surface rounded-lg p-5">
+                  <div class="flex items-center gap-3">
+                    <span
+                      class="bg-primary text-background flex size-9 shrink-0 items-center justify-center rounded-full"
+                    >
+                      <iconify-icon
+                        icon="mdi:play"
+                        class="text-lg"
+                        aria-hidden="true"
+                      ></iconify-icon>
+                    </span>
+
+                    <div class="min-w-0">
+                      <p class="text-muted text-xs font-medium">
+                        Active Session
+                      </p>
+
+                      <p
+                        class="text-foreground mt-1 truncate text-sm font-medium"
+                        data-key="overview.currentState.activeSession.id"
+                      >
+                        sess_20250830_01
+                      </p>
+                    </div>
+                  </div>
+
+                  <dl class="mt-5 space-y-3 text-sm">
+                    <div class="flex justify-between gap-4">
+                      <dt class="text-muted">Started</dt>
+
+                      <dd
+                        class="text-foreground text-right tabular-nums"
+                        data-key="overview.currentState.activeSession.startTime"
+                      >
+                        2025-08-30 13:48
+                      </dd>
+                    </div>
+
+                    <div class="flex justify-between gap-4">
+                      <dt class="text-muted">Duration</dt>
+
+                      <dd
+                        class="text-foreground text-right tabular-nums"
+                        data-key="overview.currentState.activeSession.duration"
+                      >
+                        44m
+                      </dd>
+                    </div>
+
+                    <div class="flex justify-between gap-4">
+                      <dt class="text-muted">Note</dt>
+
+                      <dd
+                        class="text-foreground max-w-[65%] text-right"
+                        data-key="overview.currentState.activeSession.note"
+                      >
+                        Working on report generation
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <!-- Active task -->
+                <div class="bg-surface rounded-lg p-5">
+                  <div class="flex items-center gap-3">
+                    <span
+                      class="bg-primary text-background flex size-9 shrink-0 items-center justify-center rounded-full"
+                    >
+                      <iconify-icon
+                        icon="mdi:checkbox-marked"
+                        class="text-lg"
+                        aria-hidden="true"
+                      ></iconify-icon>
+                    </span>
+
+                    <div class="min-w-0">
+                      <p class="text-muted text-xs font-medium">Active Task</p>
+
+                      <p
+                        class="text-foreground mt-1 truncate text-sm font-medium"
+                        data-key="overview.currentState.activeTask.title"
+                      >
+                        Implement data aggregation
+                      </p>
+                    </div>
+                  </div>
+
+                  <dl class="mt-5 space-y-3 text-sm">
+                    <div class="flex justify-between gap-4">
+                      <dt class="text-muted">Status</dt>
+
+                      <dd>
+                        <span
+                          class="bg-primary/10 text-primary rounded-full px-2.5 py-1 text-xs font-medium"
+                          data-key="overview.currentState.activeTask.status"
+                        >
+                          In Progress
+                        </span>
+                      </dd>
+                    </div>
+
+                    <div class="flex justify-between gap-4">
+                      <dt class="text-muted">Task ID</dt>
+
+                      <dd
+                        class="text-foreground max-w-[65%] truncate text-right"
+                        data-key="overview.currentState.activeTask.id"
+                      >
+                        task_001
+                      </dd>
+                    </div>
+
+                    <div class="flex justify-between gap-4">
+                      <dt class="text-muted">Created</dt>
+
+                      <dd
+                        class="text-foreground text-right tabular-nums"
+                        data-key="overview.currentState.activeTask.createdAt"
+                      >
+                        2025-08-30 13:42
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <!-- Recent activity -->
+          <section
+            class="border-border bg-background mb-4 rounded-lg border"
+            aria-labelledby="recent-activity-heading"
+          >
+            <div class="flex items-center justify-between border-b p-5">
+              <h2 id="recent-activity-heading" class="text-lg font-semibold">
+                Recent Activity
+              </h2>
+            </div>
+
+            <div
+              data-initializer="overview.recent-activity"
+              class="divide-border divide-y"
+            ></div>
+          </section>
+
+          <!-- Timeline -->
+          <section
+            class="border-border bg-background rounded-lg border"
+            aria-labelledby="timeline-heading"
+          >
+            <div class="flex items-center justify-between border-b p-5">
+              <h2 id="timeline-heading" class="text-lg font-semibold">
+                Project Timeline
+              </h2>
+            </div>
+
+            <div
+              data-initializer="overview.timeline"
+              class="overflow-x-auto p-6"
+            ></div>
+          </section>
+        </div>
+      </main>
     </div>
 
     <script type="module" src="../main.ts"></script>

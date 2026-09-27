@@ -145,14 +145,14 @@ export namespace ReportData {
       /**
        * Percentage of tasks that are completed.
        *
-       * <p>Returns {@code null} when there are no tasks.
+       * <p>Returns `null` when there are no tasks.
        */
       taskCompletionRate: number | null;
 
       /**
        * Percentage of tasks that remain open.
        *
-       * <p>Returns {@code null} when there are no tasks.
+       * <p>Returns `null` when there are no tasks.
        */
       taskOpenRate: number | null;
     }
@@ -281,7 +281,7 @@ export namespace ReportData {
       /**
        * Time at which the session ended.
        *
-       * <p>{@code null} for an active session.
+       * <p>`null` for an active session.
        */
       endTime: DateTime | null;
 
@@ -358,7 +358,7 @@ export namespace ReportData {
        * Ratio of recorded session time to the project's recorded activity
        * span.
        *
-       * <p>{@code null} when the activity span cannot be calculated.
+       * <p>`null` when the activity span cannot be calculated.
        */
       workContinuityRatio: number | null;
 
@@ -607,7 +607,7 @@ export namespace ReportData {
    */
   export interface Reference {
     /**
-     * Type of referenced entity, such as {@code task} or {@code session}.
+     * Type of referenced entity, such as `task` or `session`.
      */
     type: string;
 

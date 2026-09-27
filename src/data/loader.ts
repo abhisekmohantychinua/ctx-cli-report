@@ -4,7 +4,7 @@ import type { SourceData } from "./models/source-data";
 /**
  * Loads and parses the raw CTX report payload from the public runtime asset.
  *
- * <p>The fetched JSON is parsed through {@link SourceDataSchema}, which
+ * <p>The fetched JSON is parsed through `SourceDataSchema`, which
  * validates the report structure and converts serialized temporal values into
  * their corresponding Luxon runtime types.
  *

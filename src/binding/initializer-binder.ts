@@ -39,11 +39,20 @@ function getInitializer(key: string): Initializer {
     case "overview.timeline":
       return initializeTimeline;
 
+    case "overview.project.root.tooltip":
+      return initializeProjectRootTooltip;
+
     default:
       throw new Error(`Initializer not defined: ${key}`);
   }
 }
 
+/**
+ * Renders the task-status distribution as a donut chart, or an empty state.
+ *
+ * @param reportData - Processed report data containing task metrics.
+ * @param element - Element in which to render the chart or empty state.
+ */
 function initializeTaskStatus(
   reportData: ReportData,
   element: HTMLElement,
@@ -116,12 +125,14 @@ function initializeTaskStatus(
   void chart.render();
 }
 
+/** Converts a task status identifier into a readable label. */
 function formatStatusLabel(status: string): string {
   return status
     .replace(/[_-]+/g, " ")
     .replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
+/** Resolves the theme color associated with a task status. */
 function getStatusColor(status: string): string {
   switch (status.toLowerCase().replace(/[_\s]+/g, "-")) {
     case "completed":
@@ -141,6 +152,12 @@ function getStatusColor(status: string): string {
   }
 }
 
+/**
+ * Renders up to five recent activities, or an empty state when none exist.
+ *
+ * @param reportData - Processed report data containing recent activity.
+ * @param element - Element in which to render the activity list.
+ */
 function initializeRecentActivity(
   reportData: ReportData,
   element: HTMLElement,
@@ -149,51 +166,77 @@ function initializeRecentActivity(
 
   if (activities.length === 0) {
     element.innerHTML = `
-      <div class="text-muted p-5 text-sm">
+      <div class="text-muted flex min-h-40 items-center justify-center text-sm">
         No recent activity.
       </div>
     `;
     return;
   }
 
-  element.innerHTML = activities
-    .map((activity) => {
-      const icon = getActivityIcon(activity.type);
+  element.innerHTML = `
+    <div class="divide-border divide-y">
+      ${activities
+        .map((activity) => {
+          const type = activity.type.toLowerCase();
 
-      return `
-        <div class="flex items-center gap-4 px-5 py-4">
-          <span
-            class="bg-surface text-primary flex size-9 shrink-0 items-center justify-center rounded-full"
-          >
-            <iconify-icon
-              icon="${icon}"
-              class="text-lg"
-              aria-hidden="true"
-            ></iconify-icon>
-          </span>
+          return `
+            <div class="flex items-center gap-4 px-5 py-3.5">
+              <!-- Activity icon -->
+              <span
+                class="bg-surface text-primary flex size-9 shrink-0 items-center justify-center rounded-full"
+                aria-hidden="true"
+              >
+                <iconify-icon
+                  icon="${getActivityIcon(type)}"
+                  class="text-lg"
+                ></iconify-icon>
+              </span>
 
-          <div class="min-w-0 flex-1">
-            <p class="text-foreground truncate text-sm font-medium">
-              ${escapeHtml(activity.description)}
-            </p>
+              <!-- Activity content -->
+              <div class="min-w-0 flex-1">
+                <p class="text-foreground text-sm font-medium">
+                  ${getActivityTitle(type)}
+                </p>
 
-            <p class="text-muted mt-0.5 text-xs">
-              ${formatRelativeTime(activity.timestamp, reportData)}
-            </p>
-          </div>
-        </div>
-      `;
-    })
-    .join("");
+                <p class="text-muted mt-0.5 truncate text-xs">
+                  ${escapeHtml(activity.description)}
+                </p>
+              </div>
+
+              <!-- Relative time -->
+              <time
+                class="text-muted shrink-0 text-xs tabular-nums"
+                datetime="${activity.timestamp.toISO() ?? ""}"
+              >
+                ${formatRelativeTime(activity.timestamp, reportData)}
+              </time>
+            </div>
+          `;
+        })
+        .join("")}
+    </div>
+  `;
 }
 
+/** Returns the icon identifier associated with an activity type. */
 function getActivityIcon(type: string): string {
-  switch (type.toLowerCase()) {
+  switch (type) {
     case "session":
+    case "session.started":
       return "mdi:play-circle-outline";
 
+    case "session.ended":
+      return "mdi:stop-circle-outline";
+
     case "task":
-      return "mdi:checkbox-marked-outline";
+    case "task.started":
+      return "mdi:play-circle-outline";
+
+    case "task.completed":
+      return "mdi:check-circle-outline";
+
+    case "task.blocked":
+      return "mdi:alert-circle-outline";
 
     case "log":
       return "mdi:text-box-outline";
@@ -206,6 +249,48 @@ function getActivityIcon(type: string): string {
   }
 }
 
+/** Returns the display title associated with an activity type. */
+function getActivityTitle(type: string): string {
+  switch (type) {
+    case "session":
+      return "Session activity";
+
+    case "session.started":
+      return "Session started";
+
+    case "session.ended":
+      return "Session ended";
+
+    case "task":
+      return "Task activity";
+
+    case "task.started":
+      return "Task started";
+
+    case "task.completed":
+      return "Task completed";
+
+    case "task.blocked":
+      return "Task blocked";
+
+    case "log":
+      return "Log added";
+
+    case "decision":
+      return "Decision recorded";
+
+    default:
+      return "Activity recorded";
+  }
+}
+
+/**
+ * Formats a timestamp as a concise relative time in the project timezone.
+ *
+ * @param timestamp - Activity timestamp to format.
+ * @param reportData - Processed report data providing the project timezone.
+ * @returns A relative-time label such as `12m ago`.
+ */
 function formatRelativeTime(
   timestamp: DateTime,
   reportData: ReportData,
@@ -234,15 +319,21 @@ function formatRelativeTime(
   return `${days}d ago`;
 }
 
+/**
+ * Renders the report timeline, or an empty state when no events exist.
+ *
+ * @param reportData - Processed report data containing timeline events.
+ * @param element - Element in which to render the timeline.
+ */
 function initializeTimeline(
   reportData: ReportData,
   element: HTMLElement,
 ): void {
-  const events = reportData.overview.timeline.slice(0, 7);
+  const events = reportData.overview.timeline;
 
   if (events.length === 0) {
     element.innerHTML = `
-      <div class="text-muted py-8 text-center text-sm">
+      <div class="text-muted flex h-full min-h-40 items-center justify-center text-sm">
         No timeline events available.
       </div>
     `;
@@ -250,53 +341,80 @@ function initializeTimeline(
   }
 
   element.innerHTML = `
-    <div class="flex min-w-max items-start">
-      ${events
-        .map((event, index) => {
-          const isLast = index === events.length - 1;
+    <div class="h-full overflow-x-auto overflow-y-hidden">
+      <div class="flex h-full min-w-max items-start px-2">
+        ${events
+          .map((event, index) => {
+            const isLast = index === events.length - 1;
 
-          return `
-            <div class="flex items-start">
-              <div class="flex w-44 flex-col items-center text-center">
-                <span
-                  class="bg-surface text-primary flex size-9 items-center justify-center rounded-full border"
-                >
-                  <iconify-icon
-                    icon="${getTimelineIcon(event.type)}"
-                    class="text-lg"
-                    aria-hidden="true"
-                  ></iconify-icon>
-                </span>
+            return `
+              <div class="group relative flex h-full items-start">
+                <!-- Event -->
+                <div class="relative flex h-full w-44 shrink-0 flex-col items-center pt-4">
+                  <!-- Connector + marker -->
+                  <div class="relative flex w-full items-center">
+                    ${
+                      index > 0
+                        ? `
+                          <div
+                            class="bg-primary/40 h-px flex-1"
+                            aria-hidden="true"
+                          ></div>
+                        `
+                        : `
+                          <div class="flex-1"></div>
+                        `
+                    }
 
-                <time
-                  class="text-muted mt-3 text-xs tabular-nums"
-                >
-                  ${formatTimelineDate(event.timestamp, reportData)}
-                </time>
-
-                <p class="text-foreground mt-1 text-sm font-medium">
-                  ${escapeHtml(event.title)}
-                </p>
-              </div>
-
-              ${
-                isLast
-                  ? ""
-                  : `
                     <div
-                      class="bg-primary/40 mt-4 h-px w-20 shrink-0"
-                      aria-hidden="true"
-                    ></div>
-                  `
-              }
-            </div>
-          `;
-        })
-        .join("")}
+                      class="bg-surface border-primary text-primary relative z-10 flex size-10 shrink-0 items-center justify-center rounded-full border"
+                    >
+                      <iconify-icon
+                        icon="${getTimelineIcon(event.type)}"
+                        class="text-lg"
+                        aria-hidden="true"
+                      ></iconify-icon>
+                    </div>
+
+                    ${
+                      !isLast
+                        ? `
+                          <div
+                            class="bg-primary/40 h-px flex-1"
+                            aria-hidden="true"
+                          ></div>
+                        `
+                        : `
+                          <div class="flex-1"></div>
+                        `
+                    }
+                  </div>
+
+                  <!-- Event content -->
+                  <div class="flex flex-1 flex-col items-center px-2 pt-4 text-center">
+                    <time
+                      class="text-muted text-xs font-medium tabular-nums"
+                    >
+                      ${formatTimelineDate(event.timestamp, reportData)}
+                    </time>
+
+                    <p
+                      class="text-foreground mt-2 text-sm font-medium leading-5"
+                    >
+                      ${escapeHtml(event.title)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            `;
+          })
+          .join("")}
+      </div>
     </div>
   `;
 }
 
+/** Returns the icon identifier associated with a timeline event type. */
 function getTimelineIcon(type: string): string {
   switch (type.toLowerCase()) {
     case "session":
@@ -316,6 +434,13 @@ function getTimelineIcon(type: string): string {
   }
 }
 
+/**
+ * Formats a timeline timestamp as a localized calendar date.
+ *
+ * @param timestamp - Timeline timestamp to format.
+ * @param reportData - Processed report data providing the project timezone.
+ * @returns The formatted calendar date.
+ */
 function formatTimelineDate(
   timestamp: DateTime,
   reportData: ReportData,
@@ -325,6 +450,7 @@ function formatTimelineDate(
     .toFormat("MMM d, yyyy");
 }
 
+/** Escapes HTML-sensitive characters before inserting text into markup. */
 function escapeHtml(value: string): string {
   return value
     .replaceAll("&", "&amp;")
@@ -332,4 +458,17 @@ function escapeHtml(value: string): string {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+/**
+ * Sets the project root path as the element's tooltip text.
+ *
+ * @param reportData - Processed report data containing the project root.
+ * @param element - Element whose title attribute will be set.
+ */
+function initializeProjectRootTooltip(
+  reportData: ReportData,
+  element: HTMLElement,
+): void {
+  element.title = reportData.metadata.project.root;
 }

@@ -224,37 +224,33 @@
 
           <!-- Project overview -->
           <section
-            class="border-border bg-background mb-4 rounded-lg border"
-            aria-labelledby="project-overview-heading"
+            class="border-border bg-background mb-4 overflow-hidden rounded-xl border"
           >
-            <div
-              class="grid grid-cols-1 divide-y lg:grid-cols-[1.1fr_2fr] lg:divide-x lg:divide-y-0"
-            >
+            <div class="grid grid-cols-1 lg:grid-cols-6">
               <!-- Project information -->
-              <div class="p-6">
-                <p
-                  id="project-overview-heading"
-                  class="text-muted mb-2 text-xs font-medium"
-                >
-                  Project
-                </p>
+              <div
+                class="flex flex-col justify-between gap-6 p-6 lg:col-span-2"
+              >
+                <div>
+                  <p class="text-muted mb-1 text-sm">Project</p>
 
-                <h2
-                  class="text-2xl font-semibold tracking-tight"
-                  data-key="metadata.project.name"
-                >
-                  CTX CLI
-                </h2>
+                  <h2
+                    class="text-foreground text-2xl font-semibold tracking-tight"
+                    data-key="metadata.project.name"
+                  >
+                    sandbox
+                  </h2>
+                </div>
 
-                <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   <!-- Created -->
-                  <div>
+                  <div class="min-w-0">
                     <div
-                      class="text-muted flex items-center gap-2 text-xs font-medium"
+                      class="text-muted mb-2 flex items-center gap-2 text-sm"
                     >
                       <iconify-icon
                         icon="mdi:calendar-outline"
-                        class="text-lg"
+                        class="text-base shrink-0"
                         aria-hidden="true"
                       ></iconify-icon>
 
@@ -262,21 +258,21 @@
                     </div>
 
                     <time
-                      class="text-foreground mt-1 block text-sm tabular-nums"
+                      class="text-foreground block truncate text-sm tabular-nums"
                       data-key="metadata.project.createdAt"
                     >
-                      2025-05-12
+                      Aug 28, 2026 05:04 PM
                     </time>
                   </div>
 
                   <!-- Location -->
-                  <div>
+                  <div class="min-w-0">
                     <div
-                      class="text-muted flex items-center gap-2 text-xs font-medium"
+                      class="text-muted mb-2 flex items-center gap-2 text-sm"
                     >
                       <iconify-icon
                         icon="mdi:folder-outline"
-                        class="text-lg"
+                        class="text-base shrink-0"
                         aria-hidden="true"
                       ></iconify-icon>
 
@@ -284,113 +280,126 @@
                     </div>
 
                     <span
-                      class="text-foreground mt-1 block truncate text-sm"
+                      class="text-foreground block truncate text-sm"
                       data-key="metadata.project.root"
+                      data-initializer="overview.project.root.tooltip"
+                      title="Project root"
                     >
-                      /projects/ctx-cli
+                      D:\Project-MultiStack\CTX CLI\sandbox
                     </span>
                   </div>
                 </div>
               </div>
 
-              <!-- Metrics -->
-              <div class="grid grid-cols-2 divide-x md:grid-cols-4">
-                <!-- Sessions -->
-                <div class="p-6">
-                  <div
-                    class="text-muted flex items-center gap-2 text-xs font-medium"
-                  >
-                    <iconify-icon
-                      icon="mdi:calendar-multiple-check"
-                      class="text-xl"
-                      aria-hidden="true"
-                    ></iconify-icon>
+              <!-- Total sessions -->
+              <div class="border-border border-t p-6 lg:border-l lg:border-t-0">
+                <div class="text-muted mb-4 flex items-center gap-2 text-sm">
+                  <iconify-icon
+                    icon="mdi:calendar-check-outline"
+                    class="text-base shrink-0"
+                    aria-hidden="true"
+                  ></iconify-icon>
 
-                    <span>Total Sessions</span>
-                  </div>
-
-                  <p
-                    class="text-foreground mt-4 text-2xl font-semibold tabular-nums"
-                    data-key="overview.metrics.sessions"
-                  >
-                    24
-                  </p>
+                  <span>Total Sessions</span>
                 </div>
 
-                <!-- Recorded time -->
-                <div class="p-6">
-                  <div
-                    class="text-muted flex items-center gap-2 text-xs font-medium"
-                  >
-                    <iconify-icon
-                      icon="mdi:clock-outline"
-                      class="text-xl"
-                      aria-hidden="true"
-                    ></iconify-icon>
+                <p
+                  class="text-foreground text-2xl font-semibold tabular-nums"
+                  data-key="overview.metrics.sessions"
+                >
+                  4
+                </p>
+              </div>
 
-                    <span>Total Work Time</span>
-                  </div>
+              <!-- Total work time -->
+              <div class="border-border border-t p-6 lg:border-l lg:border-t-0">
+                <div class="text-muted mb-4 flex items-center gap-2 text-sm">
+                  <iconify-icon
+                    icon="mdi:clock-outline"
+                    class="text-base shrink-0"
+                    aria-hidden="true"
+                  ></iconify-icon>
 
-                  <p
-                    class="text-foreground mt-4 text-2xl font-semibold tabular-nums"
-                    data-key="overview.metrics.recordedDuration"
-                  >
-                    18h 42m
-                  </p>
+                  <span>Total Work Time</span>
                 </div>
 
-                <!-- Active days -->
-                <div class="p-6">
-                  <div
-                    class="text-muted flex items-center gap-2 text-xs font-medium"
-                  >
-                    <iconify-icon
-                      icon="mdi:calendar-range"
-                      class="text-xl"
-                      aria-hidden="true"
-                    ></iconify-icon>
+                <p
+                  class="text-foreground text-2xl font-semibold tabular-nums"
+                  data-key="overview.metrics.recordedDuration"
+                >
+                  104h 22m
+                </p>
+              </div>
 
-                    <span>Active Days</span>
-                  </div>
+              <!-- Active days -->
+              <div class="border-border border-t p-6 lg:border-l lg:border-t-0">
+                <div class="text-muted mb-4 flex items-center gap-2 text-sm">
+                  <iconify-icon
+                    icon="mdi:calendar-outline"
+                    class="text-base shrink-0"
+                    aria-hidden="true"
+                  ></iconify-icon>
 
-                  <p
-                    class="text-foreground mt-4 text-2xl font-semibold tabular-nums"
-                    data-key="overview.metrics.activeDays"
-                  >
-                    12
-                  </p>
+                  <span>Active Days</span>
                 </div>
 
-                <!-- Completion -->
-                <div class="p-6">
-                  <div
-                    class="text-muted flex items-center gap-2 text-xs font-medium"
-                  >
-                    <iconify-icon
-                      icon="mdi:progress-check"
-                      class="text-xl"
-                      aria-hidden="true"
-                    ></iconify-icon>
+                <p
+                  class="text-foreground text-2xl font-semibold tabular-nums"
+                  data-key="overview.metrics.activeDays"
+                >
+                  3
+                </p>
+              </div>
 
-                    <span>Task Completion</span>
-                  </div>
+              <!-- Task completion -->
+              <div class="border-border border-t p-6 lg:border-l lg:border-t-0">
+                <div class="text-muted mb-4 flex items-center gap-2 text-sm">
+                  <iconify-icon
+                    icon="mdi:progress-check"
+                    class="text-base shrink-0"
+                    aria-hidden="true"
+                  ></iconify-icon>
 
-                  <p
-                    class="text-foreground mt-4 text-2xl font-semibold tabular-nums"
-                    data-key="overview.metrics.taskCompletionRate"
-                  >
-                    59%
-                  </p>
+                  <span>Task Completion</span>
                 </div>
+
+                <p
+                  class="text-foreground text-2xl font-semibold tabular-nums"
+                  data-key="overview.metrics.taskCompletionRate"
+                >
+                  47.06%
+                </p>
               </div>
             </div>
           </section>
 
           <!-- Count cards -->
           <section
-            class="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3"
+            class="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-4"
             aria-label="Project totals"
           >
+            <!-- Sessions -->
+            <article class="border-border bg-background rounded-lg border p-5">
+              <div
+                class="text-muted flex items-center gap-2 text-sm font-medium"
+              >
+                <iconify-icon
+                  icon="mdi:history"
+                  class="text-xl"
+                  aria-hidden="true"
+                ></iconify-icon>
+
+                <span>Total Sessions</span>
+              </div>
+
+              <p
+                class="text-foreground mt-4 text-3xl font-semibold tabular-nums"
+                data-key="overview.metrics.sessions"
+              >
+                42
+              </p>
+            </article>
+
             <!-- Tasks -->
             <article class="border-border bg-background rounded-lg border p-5">
               <div
@@ -493,19 +502,6 @@
                 <h2 id="current-state-heading" class="text-lg font-semibold">
                   Current Execution State
                 </h2>
-
-                <span
-                  class="bg-success/10 text-success inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium"
-                >
-                  <span
-                    class="bg-success size-1.5 rounded-full"
-                    aria-hidden="true"
-                  ></span>
-
-                  <span data-key="overview.currentState.activeSession.status">
-                    Active
-                  </span>
-                </span>
               </div>
 
               <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -638,38 +634,38 @@
             </article>
           </section>
 
-          <!-- Recent activity -->
-          <section
-            class="border-border bg-background mb-4 rounded-lg border"
-            aria-labelledby="recent-activity-heading"
-          >
-            <div class="flex items-center justify-between border-b p-5">
-              <h2 id="recent-activity-heading" class="text-lg font-semibold">
-                Recent Activity
-              </h2>
-            </div>
+          <!-- Recent activity + timeline -->
+          <section class="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <!-- Recent activity -->
+            <article
+              class="border-border bg-background rounded-lg border"
+              aria-labelledby="recent-activity-heading"
+            >
+              <div class="flex items-center justify-between p-5">
+                <h2 id="recent-activity-heading" class="text-lg font-semibold">
+                  Recent Activity
+                </h2>
+              </div>
 
-            <div
-              data-initializer="overview.recent-activity"
-              class="divide-border divide-y"
-            ></div>
-          </section>
+              <div
+                data-initializer="overview.recent-activity"
+                class="divide-border divide-y"
+              ></div>
+            </article>
 
-          <!-- Timeline -->
-          <section
-            class="border-border bg-background rounded-lg border"
-            aria-labelledby="timeline-heading"
-          >
-            <div class="flex items-center justify-between border-b p-5">
-              <h2 id="timeline-heading" class="text-lg font-semibold">
-                Project Timeline
-              </h2>
-            </div>
+            <!-- Timeline -->
+            <article
+              class="border-border bg-background rounded-lg border lg:col-span-2"
+              aria-labelledby="timeline-heading"
+            >
+              <div class="flex items-center justify-between p-5">
+                <h2 id="timeline-heading" class="text-lg font-semibold">
+                  Project Timeline
+                </h2>
+              </div>
 
-            <div
-              data-initializer="overview.timeline"
-              class="overflow-x-auto p-6"
-            ></div>
+              <div data-initializer="overview.timeline" class="h-4/5 p-6"></div>
+            </article>
           </section>
         </div>
       </main>

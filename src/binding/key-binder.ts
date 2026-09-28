@@ -1,4 +1,5 @@
 import type { ReportData } from "../data/models/report-data";
+import { DATE_TIME_FORMAT, DURATION_FORMAT } from "./constants";
 
 /**
  * Binds a report value to a DOM element.
@@ -30,12 +31,12 @@ function getValueOfKey(reportData: ReportData, key: string): string {
     case "metadata.generatedAt":
       return reportData.metadata.generatedAt
         .setZone(reportData.metadata.project.timezone)
-        .toFormat(reportData.metadata.project.dateTimeTemplate);
+        .toFormat(DATE_TIME_FORMAT);
 
     case "metadata.project.createdAt":
       return reportData.metadata.project.createdAt
         .setZone(reportData.metadata.project.timezone)
-        .toFormat(reportData.metadata.project.dateTimeTemplate);
+        .toFormat(DATE_TIME_FORMAT);
 
     case "metadata.project.root":
       return reportData.metadata.project.root;
@@ -45,12 +46,14 @@ function getValueOfKey(reportData: ReportData, key: string): string {
 
     case "overview.metrics.recordedDuration":
       return reportData.overview.metrics.recordedDuration.toFormat(
-        "hh 'hours, 'mm 'minutes'",
+        DURATION_FORMAT,
       );
 
     case "overview.metrics.activeDays":
       return reportData.overview.metrics.activeDays.toString();
 
+    case "overview.metrics.sessions":
+      return reportData.overview.metrics.sessions.toString();
     case "overview.metrics.tasks":
       return reportData.overview.metrics.tasks.toString();
 
@@ -76,42 +79,42 @@ function getValueOfKey(reportData: ReportData, key: string): string {
       return reportData.overview.metrics.decisions.toString();
 
     case "overview.currentState.activeSession.id":
-      return reportData.overview.currentState.activeSession?.id ?? "";
+      return reportData.overview.currentState.activeSession?.id ?? "-";
 
     case "overview.currentState.activeSession.status":
-      return reportData.overview.currentState.activeSession?.status ?? "";
+      return reportData.overview.currentState.activeSession?.status ?? "-";
 
     case "overview.currentState.activeSession.startTime":
       return reportData.overview.currentState.activeSession
         ? reportData.overview.currentState.activeSession.startTime
             .setZone(reportData.metadata.project.timezone)
-            .toFormat(reportData.metadata.project.dateTimeTemplate)
+            .toFormat(DATE_TIME_FORMAT)
         : "";
 
     case "overview.currentState.activeSession.duration":
       return reportData.overview.currentState.activeSession
         ? reportData.overview.currentState.activeSession.duration.toFormat(
-            "hh 'hours, 'mm 'minutes'",
+            DURATION_FORMAT,
           )
         : "";
 
     case "overview.currentState.activeSession.note":
-      return reportData.overview.currentState.activeSession?.note ?? "";
+      return reportData.overview.currentState.activeSession?.note ?? "-";
 
     case "overview.currentState.activeTask.title":
-      return reportData.overview.currentState.activeTask?.title ?? "";
+      return reportData.overview.currentState.activeTask?.title ?? "-";
 
     case "overview.currentState.activeTask.status":
-      return reportData.overview.currentState.activeTask?.status ?? "";
+      return reportData.overview.currentState.activeTask?.status ?? "-";
 
     case "overview.currentState.activeTask.id":
-      return reportData.overview.currentState.activeTask?.id ?? "";
+      return reportData.overview.currentState.activeTask?.id ?? "-";
 
     case "overview.currentState.activeTask.createdAt":
       return (
         reportData.overview.currentState.activeTask?.createdAt
           .setZone(reportData.metadata.project.timezone)
-          .toFormat(reportData.metadata.project.dateTimeTemplate) ?? ""
+          .toFormat(DATE_TIME_FORMAT) ?? "-"
       );
 
     default:

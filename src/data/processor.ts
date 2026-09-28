@@ -1,600 +1,606 @@
-import type {
-  RawDecisionReferences,
-  RawDecisionStatistics,
-  RawLogActivity,
-  RawLogStatistics,
-  RawLogTaskAnalysis,
-  RawReportData,
-  RawSession,
-  RawSessionActivity,
-  RawSessionGaps,
-  RawSessionStatistics,
-  RawTask,
-  RawTaskActivity,
-  RawTaskHierarchy,
-} from "./models/raw";
+import type { SourceData } from "./models/source-data";
 
-import type {
-  ReportData,
-  ReportDecisions,
-  ReportDecisionActivity,
-  ReportDecisionReferences,
-  ReportDecisionStatistics,
-  ReportLogs,
-  ReportLogActivity,
-  ReportLogStatistics,
-  ReportLogTaskAnalysis,
-  ReportMetadata,
-  ReportOverview,
-  ReportSessions,
-  ReportSessionActivity,
-  ReportSessionGaps,
-  ReportSessionStatistics,
-  ReportTasks,
-  ReportTaskActivity,
-  ReportTaskHierarchy,
-  ReportTaskStatistics,
-} from "./models/report";
+import type { ReportData } from "./models/report-data";
+import { DateTime, Duration } from "luxon";
 
 /**
- * Converts CTX's semi-computed report input into the page-oriented report model.
+ * Converts validated CTX report data into the presentation-oriented model used by the generated report.
  *
- * CTX is responsible for querying, joining, filtering, sorting and aggregating
- * project data. This processor only maps those values and performs lightweight
- * arithmetic required by the report.
- * @param raw CTX-generated input data.
- * @param options Optional report metadata overrides.
- * @returns The normalized model consumed by report pages.
+ * The loader handles validation and temporal normalization before this step. This function
+ * reorganizes the validated source data into report pages and derives lightweight presentation metrics.
+ *
+ * Expensive aggregation and relationship analysis are expected to be provided by the CTX-generated
+ * report contract. This processor only performs calculations that can be derived directly and safely
+ * from the validated source data.
+ *
+ * @param source - The validated CTX report payload to transform.
+ * @returns A presentation-oriented report model ready for the UI bindings.
  */
-export function processReport(raw: RawReportData): ReportData {
+export function processSourceData(source: SourceData): ReportData {
   return {
-    metadata: processMetadata(raw),
-    overview: processOverview(raw),
-    sessions: processSessions(raw),
-    tasks: processTasks(raw),
-    logs: processLogs(raw),
-    decisions: processDecisions(raw),
+    metadata: processMetadata(source),
+    overview: processOverview(source),
+    sessions: processSessions(source),
+    tasks: processTasks(source),
+    logs: processLogs(source),
+    decisions: processDecisions(source),
   };
 }
 
-/** Maps source metadata and supplies report-generation metadata. */
-function processMetadata(raw: RawReportData): ReportMetadata {
+/**
+ * Maps project and report metadata into the report data model.
+ *
+ * @param source - The source CTX report data.
+ * @returns The sanitized metadata block used by the report pages.
+ */
+function processMetadata(source: SourceData): ReportData.Metadata {
   return {
     project: {
-      name: raw.metadata.project.name,
-      root: raw.metadata.project.root,
-      createdAt: new Date(raw.metadata.project.createdAt),
-      ctxVersion: raw.metadata.project.ctxVersion,
-      timezone: raw.metadata.project.timezone,
-      dateTimeTemplate: raw.metadata.project.dateTimeTemplate,
+      name: source.metadata.project.name,
+      root: source.metadata.project.root,
+      createdAt: source.metadata.project.createdAt,
+      version: source.metadata.project.version,
+      timezone: source.metadata.project.timezone,
+      dateTimeTemplate: source.metadata.project.dateTimeTemplate,
     },
-    dataRange: {
-      firstActivity: raw.metadata.dataRange.firstActivity,
-      lastActivity: raw.metadata.dataRange.lastActivity,
-    },
-    generatedAt: new Date(raw.metadata.generatedAt),
-    reportVersion: raw.metadata.reportVersion,
+    generatedAt: source.metadata.generatedAt,
+    reportVersion: source.metadata.reportVersion,
   };
 }
 
-/** Builds overview metrics and identifies the current report state. */
-function processOverview(raw: RawReportData): ReportOverview {
-  const activeSession =
-    raw.sessions.records.find((session) => session.status === "active") ?? null;
-
-  const activeTask = findActiveTask(raw.tasks.records, activeSession);
+/**
+ * Builds the overview model from the domain sections of the source report.
+ *
+ * @param source - The source CTX report data.
+ * @returns A compact summary model for the main dashboard and landing page.
+ */
+function processOverview(source: SourceData): ReportData.Overview {
+  const taskStatistics = source.tasks.statistics;
 
   return {
     metrics: {
-      sessions: raw.sessions.statistics.count,
-      recordedDuration: raw.sessions.statistics.totalDuration,
-      activeDays: raw.sessions.activity.activeDays,
-
-      tasks: raw.tasks.statistics.count,
-      completedTasks: raw.tasks.statistics.completedCount,
-      inProgressTasks: raw.tasks.statistics.inProgressCount,
-      blockedTasks: raw.tasks.statistics.blockedCount,
-      pendingTasks: raw.tasks.statistics.pendingCount,
-
-      logs: raw.logs.statistics.count,
-      decisions: raw.decisions.statistics.count,
-
+      sessions: source.sessions.statistics.count,
+      recordedDuration: source.sessions.statistics.totalDuration,
+      activeDays: calculateActiveDays(source),
+      tasks: taskStatistics.count,
+      completedTasks: taskStatistics.completedCount,
+      inProgressTasks: taskStatistics.inProgressCount,
+      blockedTasks: taskStatistics.blockedCount,
+      pendingTasks: taskStatistics.pendingCount,
+      logs: source.logs.statistics.count,
+      decisions: source.decisions.statistics.count,
       taskCompletionRate: percentage(
-        raw.tasks.statistics.completedCount,
-        raw.tasks.statistics.count,
+        taskStatistics.completedCount,
+        taskStatistics.count,
       ),
-      taskOpenRate: percentage(
-        raw.tasks.statistics.openCount,
-        raw.tasks.statistics.count,
-      ),
+      taskOpenRate: percentage(taskStatistics.openCount, taskStatistics.count),
     },
+
     currentState: {
-      activeSession,
-      activeTask,
-      pendingTaskCount: raw.tasks.statistics.pendingCount,
-      blockedTaskCount: raw.tasks.statistics.blockedCount,
-      latestLog: latestByTimestamp(raw.logs.records),
-      latestDecision: latestByTimestamp(raw.decisions.records),
+      activeSession: findActiveSession(source.sessions.records),
+      activeTask: findTaskInProgress(source.tasks.records),
+      pendingTaskCount: taskStatistics.pendingCount,
+      blockedTaskCount: taskStatistics.blockedCount,
+      latestLog: latestByTimestamp(source.logs.records),
+      latestDecision: latestByTimestamp(source.decisions.records),
     },
-    recentActivity: raw.activity.recent,
-    timeline: raw.activity.timeline,
+
+    recentActivity: buildRecentActivity(source),
+    timeline: buildTimeline(source),
   };
-}
-
-/** Maps session data and derives report-side session evaluations. */
-function processSessions(raw: RawReportData): ReportSessions {
-  const statistics = raw.sessions.statistics;
-  const activity = raw.sessions.activity;
-  const gaps = raw.sessions.gaps;
-
-  return {
-    records: raw.sessions.records,
-    statistics: processSessionStatistics(statistics),
-    durationDistribution: raw.sessions.durationDistribution,
-    activity: processSessionActivity(activity),
-    gaps: processSessionGaps(gaps),
-    evaluations: {
-      workContinuityRatio: calculateWorkContinuityRatio(
-        statistics.totalDuration,
-        raw.metadata.dataRange.firstActivity,
-        raw.metadata.dataRange.lastActivity,
-      ),
-      averageSessionsPerActiveDay: ratio(statistics.count, activity.activeDays),
-      averageSessionsPerCalendarDay: ratio(
-        statistics.count,
-        activity.calendarDays,
-      ),
-      averageRecordedTimePerActiveDay: ratio(
-        statistics.totalDuration,
-        activity.activeDays,
-      ),
-      averageRecordedTimePerCalendarDay: ratio(
-        statistics.totalDuration,
-        activity.calendarDays,
-      ),
-    },
-  };
-}
-
-/** Copies the CTX session statistics into the report contract. */
-function processSessionStatistics(
-  statistics: RawSessionStatistics,
-): ReportSessionStatistics {
-  return {
-    count: statistics.count,
-    completedCount: statistics.completedCount,
-    activeCount: statistics.activeCount,
-    totalDuration: statistics.totalDuration,
-    averageDuration: statistics.averageDuration,
-    medianDuration: statistics.medianDuration,
-    longestDuration: statistics.longestDuration,
-    shortestDuration: statistics.shortestDuration,
-  };
-}
-
-/** Converts raw chart values into the report's shared value format. */
-function processSessionActivity(
-  activity: RawSessionActivity,
-): ReportSessionActivity {
-  return {
-    firstStart: activity.firstStart,
-    latestEnd: activity.latestEnd,
-    calendarDays: activity.calendarDays,
-    activeDays: activity.activeDays,
-    inactiveDays: activity.inactiveDays,
-    dailyCounts: activity.dailyCounts.map((item) => ({
-      date: item.date,
-      value: item.count,
-    })),
-    dailyDurations: activity.dailyDurations.map((item) => ({
-      date: item.date,
-      value: item.duration,
-    })),
-    startByHour: activity.startByHour.map((item) => ({
-      label: String(item.hour),
-      count: item.count,
-    })),
-    startByDayOfWeek: activity.startByDayOfWeek.map((item) => ({
-      label: item.day,
-      count: item.count,
-    })),
-    averageStartTime: activity.averageStartTime,
-    peakStartHour: activity.peakStartHour,
-  };
-}
-
-/** Copies session gap statistics for report display. */
-function processSessionGaps(gaps: RawSessionGaps): ReportSessionGaps {
-  return {
-    values: gaps.values,
-    average: gaps.average,
-    median: gaps.median,
-    longest: gaps.longest,
-    shortest: gaps.shortest,
-    distribution: gaps.distribution,
-  };
-}
-
-/** Maps task data and calculates percentages for each task status. */
-function processTasks(raw: RawReportData): ReportTasks {
-  return {
-    records: raw.tasks.records,
-    statistics: processTaskStatistics(raw.tasks.statistics),
-    statusDistribution: raw.tasks.statusDistribution,
-    activity: processTaskActivity(raw.tasks.activity),
-    hierarchy: processTaskHierarchy(raw.tasks.hierarchy),
-    blocked: raw.tasks.blocked,
-    evaluations: {
-      completionRate: percentage(
-        raw.tasks.statistics.completedCount,
-        raw.tasks.statistics.count,
-      ),
-      pendingRate: percentage(
-        raw.tasks.statistics.pendingCount,
-        raw.tasks.statistics.count,
-      ),
-      inProgressRate: percentage(
-        raw.tasks.statistics.inProgressCount,
-        raw.tasks.statistics.count,
-      ),
-      blockedRate: percentage(
-        raw.tasks.statistics.blockedCount,
-        raw.tasks.statistics.count,
-      ),
-      openRate: percentage(
-        raw.tasks.statistics.openCount,
-        raw.tasks.statistics.count,
-      ),
-    },
-  };
-}
-
-/** Copies task statistics without recomputing CTX-owned aggregates. */
-function processTaskStatistics(
-  statistics: RawReportData["tasks"]["statistics"],
-): ReportTaskStatistics {
-  return {
-    count: statistics.count,
-    completedCount: statistics.completedCount,
-    pendingCount: statistics.pendingCount,
-    inProgressCount: statistics.inProgressCount,
-    blockedCount: statistics.blockedCount,
-    openCount: statistics.openCount,
-    rootCount: statistics.rootCount,
-    subtaskCount: statistics.subtaskCount,
-    maxDepth: statistics.maxDepth,
-    averageCompletionDuration: statistics.averageCompletionDuration,
-    medianCompletionDuration: statistics.medianCompletionDuration,
-    longestCompletionDuration: statistics.longestCompletionDuration,
-    shortestCompletionDuration: statistics.shortestCompletionDuration,
-  };
-}
-
-/** Converts task activity counts to the report's shared value format. */
-function processTaskActivity(activity: RawTaskActivity): ReportTaskActivity {
-  return {
-    createdByDay: activity.createdByDay.map((item) => ({
-      date: item.date,
-      value: item.count,
-    })),
-    completedByDay: activity.completedByDay.map((item) => ({
-      date: item.date,
-      value: item.count,
-    })),
-  };
-}
-
-/** Copies hierarchy findings while preserving CTX's relationship analysis. */
-function processTaskHierarchy(
-  hierarchy: RawTaskHierarchy,
-): ReportTaskHierarchy {
-  return {
-    tree: hierarchy.tree,
-    orphans: hierarchy.orphans,
-    cycles: hierarchy.cycles,
-  };
-}
-
-/** Maps log data and derives log distribution and density measures. */
-function processLogs(raw: RawReportData): ReportLogs {
-  const statistics = raw.logs.statistics;
-
-  return {
-    records: raw.logs.records,
-    statistics: processLogStatistics(statistics),
-    activity: processLogActivity(raw.logs.activity),
-    taskAnalysis: processLogTaskAnalysis(raw.logs.taskAnalysis),
-    invalidReferences: raw.logs.invalidReferences,
-    evaluations: {
-      typePercentages: percentages(statistics.byType, statistics.count),
-      issuePercentage: percentage(statistics.issuesCount, statistics.count),
-      attemptPercentage: percentage(statistics.attemptsCount, statistics.count),
-      issueWithoutAttemptPercentage: calculateIssueWithoutAttemptPercentage(
-        raw.logs.taskAnalysis,
-        statistics.issuesCount,
-      ),
-      logsPerRecordedHour: calculateLogsPerRecordedHour(
-        statistics.count,
-        raw.sessions.statistics.totalDuration,
-      ),
-    },
-  };
-}
-
-/** Copies CTX-provided log statistics into the report contract. */
-function processLogStatistics(
-  statistics: RawLogStatistics,
-): ReportLogStatistics {
-  return {
-    count: statistics.count,
-    unlinkedCount: statistics.unlinkedCount,
-    firstTimestamp: statistics.firstTimestamp,
-    latestTimestamp: statistics.latestTimestamp,
-    byType: { ...statistics.byType },
-    issuesCount: statistics.issuesCount,
-    attemptsCount: statistics.attemptsCount,
-    logsPerSession: statistics.logsPerSession,
-    logsPerTask: statistics.logsPerTask,
-    tasksWithLogs: statistics.tasksWithLogs,
-    tasksWithoutLogs: statistics.tasksWithoutLogs,
-  };
-}
-
-/** Converts log activity counts to the report's shared value format. */
-function processLogActivity(activity: RawLogActivity): ReportLogActivity {
-  return {
-    byDay: activity.byDay.map((item) => ({
-      date: item.date,
-      value: item.count,
-    })),
-    byHour: activity.byHour.map((item) => ({
-      label: String(item.hour),
-      count: item.count,
-    })),
-  };
-}
-
-/** Renames task identifiers to the generic report count-by-ID shape. */
-function processLogTaskAnalysis(
-  analysis: RawLogTaskAnalysis,
-): ReportLogTaskAnalysis {
-  return {
-    mostLoggedTasks: analysis.mostLoggedTasks.map((item) => ({
-      id: item.taskId,
-      count: item.count,
-    })),
-    tasksWithoutLogs: analysis.tasksWithoutLogs,
-    issuesByTask: analysis.issuesByTask.map((item) => ({
-      id: item.taskId,
-      count: item.count,
-    })),
-    attemptsByTask: analysis.attemptsByTask.map((item) => ({
-      id: item.taskId,
-      count: item.count,
-    })),
-    repeatedAttempts: analysis.repeatedAttempts,
-  };
-}
-
-/** Maps decision data and derives topic, tag, and reference measures. */
-function processDecisions(raw: RawReportData): ReportDecisions {
-  const statistics = raw.decisions.statistics;
-
-  return {
-    records: raw.decisions.records,
-    statistics: processDecisionStatistics(statistics),
-    references: processDecisionReferences(raw.decisions.references),
-    activity: processDecisionActivity(raw.decisions.activity),
-    evaluations: {
-      topicPercentages: percentages(
-        toCountRecord(statistics.byTopic, (item) => item.topic),
-        statistics.count,
-      ),
-      tagPercentages: percentages(
-        toCountRecord(statistics.byTag, (item) => item.tag),
-        statistics.count,
-      ),
-      decisionsPerTask: ratio(statistics.count, raw.tasks.statistics.count),
-      decisionsPerSession: ratio(
-        statistics.count,
-        raw.sessions.statistics.count,
-      ),
-      topTopicShare: calculateTopTopicShare(statistics),
-    },
-  };
-}
-
-/** Copies CTX-provided decision statistics into the report contract. */
-function processDecisionStatistics(
-  statistics: RawDecisionStatistics,
-): ReportDecisionStatistics {
-  return {
-    count: statistics.count,
-    unlinkedCount: statistics.unlinkedCount,
-    firstTimestamp: statistics.firstTimestamp,
-    latestTimestamp: statistics.latestTimestamp,
-    byTopic: statistics.byTopic,
-    repeatedTopics: statistics.repeatedTopics,
-    uncategorizedCount: statistics.uncategorizedCount,
-    byTag: statistics.byTag,
-  };
-}
-
-/** Copies decision reference indexes while preserving their entity IDs. */
-function processDecisionReferences(
-  references: RawDecisionReferences,
-): ReportDecisionReferences {
-  return {
-    byType: { ...references.byType },
-    tasksWithDecisions: references.tasksWithDecisions,
-    sessionsWithDecisions: references.sessionsWithDecisions,
-    invalid: references.invalid,
-  };
-}
-
-/** Converts decision activity counts to the report's shared value format. */
-function processDecisionActivity(
-  activity: RawReportData["decisions"]["activity"],
-): ReportDecisionActivity {
-  return {
-    byDay: activity.byDay.map((item) => ({
-      date: item.date,
-      value: item.count,
-    })),
-  };
-}
-
-/* Lightweight calculations. CTX owns the expensive aggregation work. */
-
-/** Divides two values, returning zero when the denominator is not positive. */
-function ratio(numerator: number, denominator: number): number {
-  if (denominator <= 0) {
-    return 0;
-  }
-
-  return numerator / denominator;
-}
-
-/** Expresses a ratio as a percentage while retaining full precision. */
-function percentage(numerator: number, denominator: number): number {
-  const value = ratio(numerator, denominator);
-
-  return value * 100;
-}
-
-/** Converts a keyed count map into percentages of a supplied total. */
-function percentages(
-  counts: Record<string, number>,
-  total: number,
-): Record<string, number> {
-  if (total <= 0) {
-    return Object.fromEntries(Object.keys(counts).map((key) => [key, 0]));
-  }
-
-  return Object.fromEntries(
-    Object.entries(counts).map(([key, count]) => [key, (count / total) * 100]),
-  );
-}
-
-/** Converts counted values into a lookup keyed by a selected field. */
-function toCountRecord<T>(
-  values: T[],
-  key: (value: T) => string,
-): Record<string, number> {
-  return Object.fromEntries(
-    values.map((value) => [key(value), (value as T & { count: number }).count]),
-  );
 }
 
 /**
- * Measures recorded time against the elapsed source-data span.
+ * Maps session data and derives the report-side session evaluations.
  *
- * Invalid or non-positive spans cannot produce a meaningful continuity ratio,
- * so they are represented as null for the UI to handle explicitly.
+ * @param source - The source CTX report data.
+ * @returns The processed session model with derived metrics and distribution data.
  */
-function calculateWorkContinuityRatio(
-  totalRecordedDuration: number,
-  firstActivity: string,
-  lastActivity: string,
-): number | null {
-  const start = Date.parse(firstActivity);
-  const end = Date.parse(lastActivity);
+function processSessions(source: SourceData): ReportData.Sessions {
+  const statistics = source.sessions.statistics;
+  const activeDays = calculateActiveDays(source);
 
-  if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) {
-    return null;
-  }
+  return {
+    records: source.sessions.records,
+    statistics: {
+      count: statistics.count,
+      completedCount: statistics.completedCount,
+      activeCount: statistics.activeCount,
+      totalDuration: statistics.totalDuration,
+      averageDuration: statistics.averageDuration,
+      medianDuration: statistics.medianDuration,
+      longestDuration: statistics.longestDuration,
+      shortestDuration: statistics.shortestDuration,
+    },
 
-  return totalRecordedDuration / ((end - start) / 1000);
-}
+    durationDistribution: source.sessions.durationDistribution.map(
+      (distribution) => ({
+        label: distribution.label,
+        count: distribution.count,
+      }),
+    ),
 
-/** Calculates log density using recorded seconds converted to hours. */
-function calculateLogsPerRecordedHour(
-  logCount: number,
-  recordedDuration: number,
-): number | null {
-  return ratio(logCount, recordedDuration / 3600);
+    gaps: {
+      values: source.sessions.gaps.values,
+      average: source.sessions.gaps.average,
+      median: source.sessions.gaps.median,
+      longest: source.sessions.gaps.longest,
+      shortest: source.sessions.gaps.shortest,
+      distribution: source.sessions.gaps.distribution.map((distribution) => ({
+        label: distribution.label,
+        count: distribution.count,
+      })),
+    },
+
+    evaluations: {
+      workContinuityRatio: calculateWorkContinuity(
+        source.sessions.records,
+        statistics.totalDuration,
+      ),
+      averageSessionsPerActiveDay: ratio(statistics.count, activeDays),
+      averageSessionsPerCalendarDay: calculateAverageSessionsPerCalendarDay(
+        source.sessions.records,
+        statistics.count,
+      ),
+      averageRecordedTimePerActiveDay: durationRatio(
+        statistics.totalDuration,
+        activeDays,
+      ),
+      averageRecordedTimePerCalendarDay:
+        calculateAverageRecordedTimePerCalendarDay(
+          source.sessions.records,
+          statistics.totalDuration,
+        ),
+    },
+  };
 }
 
 /**
- * Estimates issue coverage by comparing task IDs with and without attempts.
- * CTX exposes task-level counts, so this is intentionally task-based rather
- * than a claim about individual issue log entries.
+ * Maps task data and derives task completion metrics.
+ *
+ * @param source - The source CTX report data.
+ * @returns The processed task model with status summaries and hierarchy data.
  */
-function calculateIssueWithoutAttemptPercentage(
-  analysis: RawLogTaskAnalysis,
-  issueCount: number,
-): number | null {
-  if (issueCount <= 0) {
-    return null;
-  }
+function processTasks(source: SourceData): ReportData.Tasks {
+  const statistics = source.tasks.statistics;
 
-  const attemptedTaskIds = new Set(
-    analysis.attemptsByTask.map((item) => item.taskId),
-  );
+  return {
+    records: source.tasks.records,
+    statistics: {
+      count: statistics.count,
+      completedCount: statistics.completedCount,
+      pendingCount: statistics.pendingCount,
+      inProgressCount: statistics.inProgressCount,
+      blockedCount: statistics.blockedCount,
+      openCount: statistics.openCount,
+      rootCount: statistics.rootCount,
+      subtaskCount: statistics.subtaskCount,
+      maxDepth: statistics.maxDepth,
+      averageCompletionDuration: statistics.averageCompletionDuration,
+      medianCompletionDuration: statistics.medianCompletionDuration,
+      longestCompletionDuration: statistics.longestCompletionDuration,
+      shortestCompletionDuration: statistics.shortestCompletionDuration,
+    },
 
-  const issueTaskIds = new Set(
-    analysis.issuesByTask.map((item) => item.taskId),
-  );
+    statusDistribution: source.tasks.statusDistribution.map((item) => ({
+      status: item.status,
+      count: item.count,
+    })),
 
-  let issuesWithoutAttempt = 0;
+    tree: source.tasks.tree.map(processTaskTreeNode),
 
-  for (const taskId of issueTaskIds) {
-    if (!attemptedTaskIds.has(taskId)) {
-      issuesWithoutAttempt++;
-    }
-  }
-
-  return (issuesWithoutAttempt / issueCount) * 100;
+    blocked: source.tasks.blocked.map((item) => ({
+      taskId: item.taskId,
+      reason: item.reason,
+    })),
+  };
 }
 
-/** Returns the share of all decisions represented by the busiest topic. */
-function calculateTopTopicShare(
-  statistics: RawDecisionStatistics,
-): number | null {
-  if (statistics.count <= 0 || statistics.byTopic.length === 0) {
-    return null;
-  }
-
-  const topCount = Math.max(...statistics.byTopic.map((item) => item.count));
-
-  return (topCount / statistics.count) * 100;
+/**
+ * Recursively maps a task hierarchy node into the report model.
+ *
+ * @param node - The task tree node from the validated source data.
+ * @returns The transformed tree node for UI rendering.
+ */
+function processTaskTreeNode(
+  node: SourceData.Tasks.TreeNode,
+): ReportData.Tasks.TreeNode {
+  return {
+    task: node.task,
+    children: node.children.map(processTaskTreeNode),
+  };
 }
 
-/* Small mapping helpers. */
+/**
+ * Maps log data and task-oriented analysis into the report model.
+ *
+ * @param source - The source CTX report data.
+ * @returns The processed log model with statistics and task linkage information.
+ */
+function processLogs(source: SourceData): ReportData.Logs {
+  const statistics = source.logs.statistics;
 
-/** Finds the in-progress task attached to the active session, if any. */
-function findActiveTask(
-  tasks: RawTask[],
-  activeSession: RawSession | null,
-): RawTask | null {
-  if (!activeSession) {
-    return null;
-  }
+  return {
+    records: source.logs.records,
 
-  const sessionTaskIds = new Set(activeSession.taskIds);
+    statistics: {
+      count: statistics.count,
+      unlinkedCount: statistics.unlinkedCount,
+      firstTimestamp: statistics.firstTimestamp,
+      latestTimestamp: statistics.latestTimestamp,
+      byType: {
+        note: statistics.byType.note,
+        idea: statistics.byType.idea,
+        issue: statistics.byType.issue,
+        attempt: statistics.byType.attempt,
+      },
+      issuesCount: statistics.issuesCount,
+      attemptsCount: statistics.attemptsCount,
+      logsPerSession: statistics.logsPerSession,
+      logsPerTask: statistics.logsPerTask,
+      tasksWithLogs: statistics.tasksWithLogs,
+      tasksWithoutLogs: statistics.tasksWithoutLogs,
+    },
 
-  return (
-    tasks.find(
-      (task) => sessionTaskIds.has(task.id) && task.status === "in-progress",
-    ) ?? null
-  );
+    taskAnalysis: {
+      mostLoggedTasks: source.logs.taskAnalysis.mostLoggedTasks.map((item) => ({
+        taskId: item.taskId,
+        count: item.count,
+      })),
+
+      tasksWithoutLogs: source.logs.taskAnalysis.tasksWithoutLogs,
+
+      issuesByTask: source.logs.taskAnalysis.issuesByTask.map((item) => ({
+        taskId: item.taskId,
+        count: item.count,
+      })),
+
+      attemptsByTask: source.logs.taskAnalysis.attemptsByTask.map((item) => ({
+        taskId: item.taskId,
+        count: item.count,
+      })),
+
+      repeatedAttempts: source.logs.taskAnalysis.repeatedAttempts.map(
+        (item) => ({
+          taskId: item.taskId,
+          count: item.count,
+        }),
+      ),
+    },
+  };
 }
 
-/** Returns the record with the lexicographically latest timestamp. */
-function latestByTimestamp<T extends { timestamp: string }>(
+/**
+ * Maps decision data and reference analysis into the report model.
+ *
+ * @param source - The source CTX report data.
+ * @returns The processed decision model with topic summaries and references.
+ */
+function processDecisions(source: SourceData): ReportData.Decisions {
+  const statistics = source.decisions.statistics;
+
+  return {
+    records: source.decisions.records,
+
+    statistics: {
+      count: statistics.count,
+      unlinkedCount: statistics.unlinkedCount,
+      firstTimestamp: statistics.firstTimestamp,
+      latestTimestamp: statistics.latestTimestamp,
+
+      byTopic: statistics.byTopic.map((item) => ({
+        topic: item.topic,
+        count: item.count,
+      })),
+
+      repeatedTopics: statistics.repeatedTopics,
+      uncategorizedCount: statistics.uncategorizedCount,
+
+      byTag: statistics.byTag.map((item) => ({
+        tag: item.tag,
+        count: item.count,
+      })),
+    },
+
+    references: {
+      byType: {
+        task: source.decisions.references.byType.task,
+        session: source.decisions.references.byType.session,
+      },
+      tasksWithDecisions: source.decisions.references.tasksWithDecisions,
+      sessionsWithDecisions: source.decisions.references.sessionsWithDecisions,
+    },
+  };
+}
+
+/* -------------------------------------------------------------------------- */
+/* Overview helpers                                                            */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Finds the currently active session in the source records.
+ *
+ * @param sessions - The session records to inspect.
+ * @returns The active session, or null when none is currently active.
+ */
+function findActiveSession(
+  sessions: SourceData.Sessions.Record[],
+): ReportData.Sessions.Record | null {
+  return sessions.find((session) => session.status === "active") ?? null;
+}
+
+/**
+ * Counts the distinct local calendar days that contain at least one session.
+ *
+ * The project's configured timezone is used so the calculation aligns with the project calendar
+ * rather than UTC.
+ *
+ * @param source - The source CTX report data.
+ * @returns The number of active local days in the project timeline.
+ */
+function calculateActiveDays(source: SourceData): number {
+  const timezone = source.metadata.project.timezone;
+
+  return new Set(
+    source.sessions.records.map((session) =>
+      session.startTime.setZone(timezone).toISODate(),
+    ),
+  ).size;
+}
+
+/**
+ * Finds the most recent record in a timestamped collection.
+ *
+ * @template T - The item type. It must include a Luxon DateTime timestamp.
+ * @param records - The collection of records to inspect.
+ * @returns The latest record by timestamp, or null when the collection is empty.
+ */
+function latestByTimestamp<T extends { timestamp: DateTime }>(
   records: T[],
 ): T | null {
   if (records.length === 0) {
     return null;
   }
 
-  let latest = records[0];
+  return records.reduce((latest, current) =>
+    current.timestamp.toMillis() > latest.timestamp.toMillis()
+      ? current
+      : latest,
+  );
+}
 
-  for (let index = 1; index < records.length; index++) {
-    if (records[index].timestamp > latest.timestamp) {
-      latest = records[index];
+/**
+ * Builds a compact activity feed from persisted project events.
+ *
+ * The feed intentionally uses actual persisted records only and does not infer additional events
+ * such as task progress when those are not represented in the source contract.
+ *
+ * @param source - The source CTX report data.
+ * @returns The most recent project activities in reverse-chronological order.
+ */
+function buildRecentActivity(
+  source: SourceData,
+): ReportData.Overview.Activity[] {
+  const activities: ReportData.Overview.Activity[] = [];
+
+  for (const session of source.sessions.records) {
+    activities.push({
+      timestamp: session.startTime,
+      type: "session",
+      id: session.id,
+      description:
+        session.status === "active" ? "Session started" : "Session recorded",
+    });
+  }
+
+  for (const task of source.tasks.records) {
+    activities.push({
+      timestamp: task.createdAt,
+      type: "task",
+      id: task.id,
+      description: `Task created: ${task.title}`,
+    });
+
+    if (task.completedAt) {
+      activities.push({
+        timestamp: task.completedAt,
+        type: "task",
+        id: task.id,
+        description: `Task completed: ${task.title}`,
+      });
     }
   }
 
-  return latest;
+  for (const log of source.logs.records) {
+    activities.push({
+      timestamp: log.timestamp,
+      type: "log",
+      id: log.id,
+      description: log.note,
+    });
+  }
+
+  for (const decision of source.decisions.records) {
+    activities.push({
+      timestamp: decision.timestamp,
+      type: "decision",
+      id: decision.id,
+      description: decision.topic,
+    });
+  }
+
+  return activities
+    .sort(
+      (left, right) => right.timestamp.toMillis() - left.timestamp.toMillis(),
+    )
+    .slice(0, 20);
+}
+
+/**
+ * Builds the project timeline from persisted events.
+ *
+ * @param source - The source CTX report data.
+ * @returns A timeline representation of the latest project activity records.
+ */
+function buildTimeline(
+  source: SourceData,
+): ReportData.Overview.TimelineEvent[] {
+  return buildRecentActivity(source).map((activity) => ({
+    timestamp: activity.timestamp,
+    type: activity.type,
+    id: activity.id,
+    title: activity.description,
+  }));
+}
+
+/* -------------------------------------------------------------------------- */
+/* Session calculations                                                        */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Calculates the ratio of recorded session time to the total elapsed span covered by the session records.
+ *
+ * A value cannot be calculated when fewer than two sessions are present or when the resulting time span
+ * is non-positive.
+ *
+ * @param sessions - The session records used in the calculation.
+ * @param totalDuration - The total recorded session duration.
+ * @returns The continuity ratio, or null when it cannot be computed.
+ */
+function calculateWorkContinuity(
+  sessions: SourceData.Sessions.Record[],
+  totalDuration: Duration,
+): number | null {
+  if (sessions.length < 2) {
+    return null;
+  }
+
+  const first = sessions.reduce((earliest, current) =>
+    current.startTime.toMillis() < earliest.startTime.toMillis()
+      ? current
+      : earliest,
+  );
+
+  const last = sessions.reduce((latest, current) => {
+    const currentEnd = current.endTime ?? current.startTime;
+
+    const latestEnd = latest.endTime ?? latest.startTime;
+
+    return currentEnd.toMillis() > latestEnd.toMillis() ? current : latest;
+  });
+
+  const firstTime = first.startTime.toMillis();
+  const lastTime = (last.endTime ?? last.startTime).toMillis();
+  const elapsed = lastTime - firstTime;
+
+  if (elapsed <= 0) {
+    return null;
+  }
+
+  return totalDuration.as("milliseconds") / elapsed;
+}
+
+/**
+ * Calculates the average number of sessions per day containing activity.
+ *
+ * @param sessions - The session records to evaluate.
+ * @param count - The total number of sessions recorded.
+ * @returns The average sessions per calendar day, or null when no valid denominator exists.
+ */
+function calculateAverageSessionsPerCalendarDay(
+  sessions: SourceData.Sessions.Record[],
+  count: number,
+): number | null {
+  if (sessions.length === 0 || count === 0) {
+    return null;
+  }
+
+  const days = new Set(
+    sessions.map((session) => session.startTime.toISODate()),
+  );
+
+  return ratio(count, days.size);
+}
+
+/**
+ * Calculates the average recorded duration per calendar day covered by sessions.
+ *
+ * @param sessions - The session records to evaluate.
+ * @param totalDuration - The total recorded session duration.
+ * @returns The average duration per covered day, or null when no sessions exist.
+ */
+function calculateAverageRecordedTimePerCalendarDay(
+  sessions: SourceData.Sessions.Record[],
+  totalDuration: Duration,
+): Duration | null {
+  if (sessions.length === 0) {
+    return null;
+  }
+
+  const days = new Set(
+    sessions.map((session) => session.startTime.toISODate()),
+  );
+
+  return durationRatio(totalDuration, days.size);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Generic calculations                                                        */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Calculates a percentage value for a numerator and denominator.
+ *
+ * @param numerator - The numerator value.
+ * @param denominator - The denominator value.
+ * @returns The percentage as a number, or null when the denominator is zero or negative.
+ */
+function percentage(numerator: number, denominator: number): number | null {
+  if (denominator <= 0) {
+    return null;
+  }
+
+  return (numerator / denominator) * 100;
+}
+
+/**
+ * Calculates a numeric ratio between two values.
+ *
+ * @param numerator - The numerator value.
+ * @param denominator - The denominator value.
+ * @returns The ratio, or null when the denominator is zero or negative.
+ */
+function ratio(numerator: number, denominator: number): number | null {
+  if (denominator <= 0) {
+    return null;
+  }
+
+  return numerator / denominator;
+}
+
+/**
+ * Divides a duration by a positive numeric value.
+ *
+ * @param duration - The duration to divide.
+ * @param divisor - The positive divisor.
+ * @returns The scaled duration, or null when the divisor is not positive.
+ */
+function durationRatio(duration: Duration, divisor: number): Duration | null {
+  if (divisor <= 0) {
+    return null;
+  }
+
+  return duration.mapUnits((value) => value / divisor);
+}
+
+/**
+ * Finds the task that is currently marked as in progress.
+ *
+ * @param tasks - The task records to inspect.
+ * @returns The in-progress task, or null when no task is in progress.
+ */
+function findTaskInProgress(
+  tasks: SourceData.Tasks.Record[],
+): ReportData.Tasks.Record | null {
+  return tasks.find((task) => task.status === "in-progress") ?? null;
 }

@@ -1,4 +1,4 @@
-import type { ReportData } from "../data/models/report";
+import type { ReportData } from "../data/models/report-data";
 import { bindInitializer } from "./initializer-binder";
 import { bindKey } from "./key-binder";
 

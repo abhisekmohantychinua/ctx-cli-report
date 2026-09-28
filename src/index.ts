@@ -48,4 +48,8 @@ async function bootstrapApplication(): Promise<void> {
 
 bootstrapApplication().catch((error: unknown) => {
   console.error("Failed to initialize application.", error);
+
+  if (error instanceof Error) {
+    console.log("Message: ", error.message);
+  }
 });

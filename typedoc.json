@@ -1,0 +1,8 @@
+{
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "out": "build/docs",
+  "name": "CTX CLI Report",
+  "excludeInternal": true,
+  "highlightLanguages": ["bash", "html", "mermaid", "ts"]
+}

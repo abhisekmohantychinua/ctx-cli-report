@@ -45,7 +45,7 @@ describe("main", () => {
 
     mocks.bootstrapData.mockResolvedValue(report);
 
-    await import("../src/main");
+    await import("../src/index");
 
     await vi.waitFor(() => {
       expect(mocks.bootstrapTheming).toHaveBeenCalledOnce();
@@ -74,7 +74,7 @@ describe("main", () => {
     });
 
     try {
-      await import("../src/main");
+      await import("../src/index");
 
       await Promise.resolve();
 
@@ -103,7 +103,7 @@ describe("main", () => {
 
     mocks.bootstrapData.mockRejectedValue(error);
 
-    await import("../src/main");
+    await import("../src/index");
 
     await vi.waitFor(() => {
       expect(console.error).toHaveBeenCalledWith(
@@ -137,7 +137,7 @@ describe("main", () => {
       initializationOrder.push("preline");
     });
 
-    await import("../src/main");
+    await import("../src/index");
 
     await vi.waitFor(() => {
       expect(initializationOrder).toEqual(["theme", "binding", "preline"]);

@@ -47,13 +47,9 @@ async function bootstrapApplication(): Promise<void> {
 }
 
 bootstrapApplication().catch((error: unknown) => {
-  console.error(
-    [
-      "Failed to initialize application.",
-      "",
-      error instanceof Error
-        ? `${error.stack ?? `${error.name}: ${error.message}`}`
-        : String(error),
-    ].join("\n"),
-  );
+  console.error("Failed to initialize application.", error);
+
+  if (error instanceof Error) {
+    console.log("Message: ", error.message);
+  }
 });
